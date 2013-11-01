@@ -8,49 +8,63 @@ import ddf.minim.effects.*;
 Minim minim;
 AudioPlayer player;
 AudioInput input;
+
  
+int prevTime;
 int currentTime;
 int tempo =1000;
 int delta;
+final int pasTempo = 50;
 
 void setup()
 {
   size(100, 100);
  
   minim = new Minim(this);
-  player = minim.loadFile("C:/Users/anton/Desktop/test.wav");
+  player = minim.loadFile("../test.wav");
   input = minim.getLineIn();
   
-  currentTime = millis();
+  prevTime = millis();
+  currentTime = 0;
 }
  
 void draw()
 {
-  delta = millis() -  currentTime;
-  if(delta >= tempo){
-    currentTime = millis();
+  delta = millis() -  prevTime;
+  currentTime += delta;
+  if(currentTime >= tempo){
+    currentTime = currentTime - tempo;
     
     
     player.rewind();
     player.play();
   }
-  // do what you do
+  /*
+  int nbT = int(random(1000));
+  int x = 0;
+  for(int i = 0; i< nbT;i++){
+    x +=1;
+  }
+  println(" x = " + x);*/
+  
+  prevTime = millis();
 }
 
 void keyPressed() {
-  switch(key){
-    case 'o':
-      println("hoha");
-      tempo += 100;
-      break;
-    case 'l' :
-      println("hoho");
-      if(tempo > 100){
-        tempo -=100;
-      }else{
-        tempo = 0;
-      }
-      break;
+  if (key == CODED) {
+    switch(keyCode){
+      case UP:
+        tempo += pasTempo;
+        break;
+      case DOWN :
+        if(tempo > pasTempo){
+          tempo -=pasTempo;
+        }else{
+          tempo = 0;
+        }
+        break;
+    }
+    println(tempo);
   }
 }
 void stop()
