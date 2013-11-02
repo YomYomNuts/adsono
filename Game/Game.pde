@@ -81,6 +81,10 @@ final int ledStomach = 11;
 final int ledThighRight = 12;
 final int ledThighLeft = 13;
 
+// arduino id
+final int PLAYER1 = 1;
+final int PLAYER2 = 2;
+
 // Led tempo pin
 final int ledTempo[] = { 22, 23, 24, 25, 26, 27 };
 
@@ -101,7 +105,7 @@ int timerChangementPlayer;
 int stateRumbleChangePlayer;
 // Tempo
 Minim minim;
-AudioPlayer player;
+AudioPlayer audioPlayer;
 AudioInput input;
 int prevTime;
 int currentTime;
@@ -133,7 +137,7 @@ void setup()
   currentTime = 0;
   tempo = 10000;
   minim = new Minim(this);
-  player = minim.loadFile("Music/test.wav");
+  audioPlayer = minim.loadFile("Music/test.wav");
 }
 
 void draw()
@@ -156,15 +160,18 @@ void draw()
         {
           case stateRumbleThigh:
           {
-            // TODO launch rumble rumbleThighRight and rumbleThighLeft
+            setPinState(PLAYER1,rumbleThighRight,Arduino.HIGH);
+            setPinState(PLAYER1,rumbleThighLeft,Arduino.HIGH);
           } break;
           case stateRumbleStomach:
           {
-            // TODO launch rumble rumbleBoobs and rumbleStomach
+            setPinState(PLAYER1,rumbleBoobs,Arduino.HIGH);
+            setPinState(PLAYER1,rumbleStomach,Arduino.HIGH);
           } break;
           case stateRumbleArm:
           {
-            // TODO launch rumble rumbleArmRight and rumbleArmLeft
+            setPinState(PLAYER1,rumbleArmRight,Arduino.HIGH);
+            setPinState(PLAYER1,rumbleArmLeft,Arduino.HIGH);
           } break;
         }
       }
@@ -177,12 +184,38 @@ void draw()
         currentState = stateReproductP2;
         currentTime = 0;
         
-        // TODO stop the rumbles
+        setPinState(PLAYER1,rumbleThighRight,Arduino.LOW);
+        setPinState(PLAYER1,rumbleThighLeft,Arduino.LOW);
+        setPinState(PLAYER1,rumbleBoobs,Arduino.LOW);
+        setPinState(PLAYER1,rumbleStomach,Arduino.LOW);
+        setPinState(PLAYER1,rumbleArmRight,Arduino.LOW);
+        setPinState(PLAYER1,rumbleArmLeft,Arduino.LOW);
       }
     } break;
     case stateChangePlayerP2toP1:
     {
       ++timerChangementPlayer;
+      if (timerChangementPlayer >= timerLaunchRumbleDuringChangementPlayer * (1 + stateRumbleChangePlayer))
+      {
+        switch(stateRumbleChangePlayer)
+        {
+          case stateRumbleThigh:
+          {
+            setPinState(PLAYER2,rumbleThighRight,Arduino.HIGH);
+            setPinState(PLAYER2,rumbleThighLeft,Arduino.HIGH);
+          } break;
+          case stateRumbleStomach:
+          {
+            setPinState(PLAYER2,rumbleBoobs,Arduino.HIGH);
+            setPinState(PLAYER2,rumbleStomach,Arduino.HIGH);
+          } break;
+          case stateRumbleArm:
+          {
+            setPinState(PLAYER2,rumbleArmRight,Arduino.HIGH);
+            setPinState(PLAYER2,rumbleArmLeft,Arduino.HIGH);
+          } break;
+        }
+      }
       if (timerChangementPlayer >= timerBetweenChangementPlayer)
       {
         println("Player 1");
@@ -192,7 +225,12 @@ void draw()
         currentState = stateReproductP1;
         currentTime = 0;
         
-        // TODO stop the rumbles
+        setPinState(PLAYER2,rumbleThighRight,Arduino.LOW);
+        setPinState(PLAYER2,rumbleThighLeft,Arduino.LOW);
+        setPinState(PLAYER2,rumbleBoobs,Arduino.LOW);
+        setPinState(PLAYER2,rumbleStomach,Arduino.LOW);
+        setPinState(PLAYER2,rumbleArmRight,Arduino.LOW);
+        setPinState(PLAYER2,rumbleArmLeft,Arduino.LOW);
       }
     } break;
     case stateFailReproductP1:
@@ -216,16 +254,23 @@ void giveTempo()
     canGetInput = true;
     println("Press");
     // TODO Launch the rumble for the current player and leds for two players be careful with the blank
-    if (currentState == stateReproductP1)
+    if(listInputs.get(currentInput) != blankInput)
     {
+      int p = 1;
+      if (currentState == stateReproductP1)
+      {
+        p = PLAYER1;
+      }
+      else if (currentState == stateReproductP2)
+      {
+        p = PLAYER2;
+      }
+      setPinState(p,getLedPin(listInputs.get(currentInput)),Arduino.HIGH);
+      setPinState(p,getRumblePin(listInputs.get(currentInput)),Arduino.HIGH);
     }
-    else if (currentState == stateReproductP2)
-    {
-    }
-    
     // Launch music feedback tempo
-    player.rewind();
-    player.play();
+    audioPlayer.rewind();
+    audioPlayer.play();
   }
   if (currentTime > tempo + spaceTimeGetInput/2)
   {
@@ -308,10 +353,16 @@ void keyPressed()
     switch(currentState)
     {
       case stateReproductP1:
+        stopAllRumble(PLAYER1);
+        stopAllLED(PLAYER1);
       case stateReproductP2:
       {
         // Get final state
         // TODO stop the rumble and the leds of this action
+        
+        stopAllRumble(PLAYER2);
+        stopAllLED(PLAYER2);
+        
         int stateFail, stateFinish;
         if (currentState == stateReproductP1)
         {
@@ -346,7 +397,11 @@ void keyPressed()
         // Add the input
         listInputs.append(currentGeneralInputPress);
         
-        // TODO Launch led on this input for 2 players
+        
+        int pin = getLedPin(currentGeneralInputPress);
+        setPinState(PLAYER1,pin,Arduino.HIGH);
+        setPinState(PLAYER2,pin,Arduino.HIGH);
+        
         
         // Finish record
         if (listInputs.size() == currentInput + numberInputByMesure)
@@ -432,6 +487,64 @@ int getGeneralInput(char keyPress, int player)
   return -1;
 }
 
+int getLedPin(int input)
+{
+  switch (input)
+  {
+     case buttonArmRight : 
+       return ledArmRight;
+     case buttonArmLeft : 
+       return ledArmLeft;
+     case buttonBoobs : 
+       return ledBoobs;
+     case buttonStomach : 
+       return ledStomach;
+     case buttonThighRight : 
+       return ledThighRight;
+     case buttonThighLeft : 
+       return ledThighLeft;
+   }
+   return 0;
+}
+int getRumblePin(int input)
+{
+  switch (input){
+     case buttonArmRight : 
+       return rumbleArmRight;
+     case buttonArmLeft : 
+       return rumbleArmLeft;
+     case buttonBoobs : 
+       return rumbleBoobs;
+     case buttonStomach : 
+       return rumbleStomach;
+     case buttonThighRight : 
+       return rumbleThighRight;
+     case buttonThighLeft : 
+       return rumbleThighLeft;
+  }
+  return 0;
+}
+
+void stopAllRumble(int player)
+{
+  setPinState(player,rumbleArmRight,Arduino.LOW);
+  setPinState(player,rumbleArmLeft,Arduino.LOW);
+  setPinState(player,rumbleBoobs,Arduino.LOW);
+  setPinState(player,rumbleStomach,Arduino.LOW);
+  setPinState(player,rumbleThighRight,Arduino.LOW);
+  setPinState(player,rumbleThighLeft,Arduino.LOW);
+}
+
+void stopAllLED(int player)
+{
+  setPinState(player,ledArmRight,Arduino.LOW);
+  setPinState(player,ledArmLeft,Arduino.LOW);
+  setPinState(player,ledBoobs,Arduino.LOW);
+  setPinState(player,ledStomach,Arduino.LOW);
+  setPinState(player,ledThighRight,Arduino.LOW);
+  setPinState(player,ledThighLeft,Arduino.LOW);
+}
+
 int checkKey(int keyPress)
 {
   if (listInputs.get(currentInput) == keyPress)
@@ -464,15 +577,28 @@ void keyReleased()
     case stateChangePlayerP1toP2:
     case stateChangePlayerP2toP1:
     {
-      // TODO stop leds of this previous action
+      stopAllLED(PLAYER1);
+      stopAllLED(PLAYER2);
     } break;
+  }
+}
+
+void setPinState(int player,int pin,int value)
+{
+  switch (player){
+    case PLAYER1:
+      arduinoP1.digitalWrite(pin, value);
+      break;
+    case PLAYER2:
+      arduinoP2.digitalWrite(pin, value);
+      break;
   }
 }
 
 void stop()
 {
   // the AudioPlayer you got from Minim.loadFile()
-  player.close();
+  audioPlayer.close();
   // the AudioInput you got from Minim.getLineIn()
   input.close();
   minim.stop();

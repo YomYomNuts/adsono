@@ -8,8 +8,12 @@ import ddf.minim.effects.*;
 Minim minim;
 AudioPlayer player;
 AudioInput input;
+ArrayList<AudioPlayer> audioPlayers1;
+ArrayList<AudioPlayer> audioPlayers2;
+int counterAudioPlayer1;
+int counterAudioPlayer2;
+int tours = 1;
 
- 
 int prevTime;
 int currentTime;
 int tempo =1000;
@@ -24,6 +28,18 @@ void setup()
   player = minim.loadFile("../test.wav");
   input = minim.getLineIn();
   
+  audioPlayers1 = new ArrayList<AudioPlayer>();
+  audioPlayers2 = new ArrayList<AudioPlayer>();
+  counterAudioPlayer1 = 0 ;
+  counterAudioPlayer2 = 0 ;
+  audioPlayers1.add(minim.loadFile("../test.wav"));
+  audioPlayers1.add(minim.loadFile("../p11.wav"));
+  audioPlayers1.add(minim.loadFile("../p12.wav"));
+  audioPlayers2.add(minim.loadFile("../p21.wav"));
+  audioPlayers2.add(minim.loadFile("../p22.wav"));
+  audioPlayers2.add(minim.loadFile("../test.wav"));
+  tours = 1;
+  
   prevTime = millis();
   currentTime = 0;
 }
@@ -35,17 +51,19 @@ void draw()
   if(currentTime >= tempo){
     currentTime = currentTime - tempo;
     
-    
-    player.rewind();
-    player.play();
+    if(tours == 1)
+    {
+      audioPlayers1.get(counterAudioPlayer1).rewind();
+      audioPlayers1.get(counterAudioPlayer1).play();
+      counterAudioPlayer1 = (counterAudioPlayer1 + 1) % audioPlayers1.size();
+      
+    }else
+    {
+      audioPlayers2.get(counterAudioPlayer2).rewind();
+      audioPlayers2.get(counterAudioPlayer2).play();
+      counterAudioPlayer2 = (counterAudioPlayer2 + 1) % audioPlayers2.size();
+    }
   }
-  /*
-  int nbT = int(random(1000));
-  int x = 0;
-  for(int i = 0; i< nbT;i++){
-    x +=1;
-  }
-  println(" x = " + x);*/
   
   prevTime = millis();
 }
@@ -63,6 +81,10 @@ void keyPressed() {
           tempo = 0;
         }
         break;
+       case RIGHT :
+         tours =(tours + 1)%2;
+         break;
+         
     }
     println(tempo);
   }
