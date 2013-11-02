@@ -90,7 +90,9 @@ final int ledTempo[] = { 22, 23, 24, 25, 26, 27 };
 
 // Led round
 final int ledRound[] = { 28, 29, 30, 31 };
+int roundCount = 0;
 
+final int BPM[] = {60,80,100,120,138,184,200};
 
 // Varibles game
 Arduino arduinoP1;
@@ -103,10 +105,18 @@ boolean waitNextTempo;
 int currentInput;
 int timerChangementPlayer;
 int stateRumbleChangePlayer;
+int current_bpm_index = 0;
 // Tempo
 Minim minim;
-AudioPlayer audioPlayer;
-AudioInput input;
+
+ArrayList<AudioPlayer> audioPlayers1;
+ArrayList<AudioPlayer> audioPlayers2;
+int counterAudioPlayer1;
+int counterAudioPlayer2;
+
+int scorePlayer1 =0;
+int scorePlayer2 =0;
+
 int prevTime;
 int currentTime;
 int tempo;
@@ -137,7 +147,14 @@ void setup()
   currentTime = 0;
   tempo = 10000;
   minim = new Minim(this);
-  audioPlayer = minim.loadFile("Music/test.wav");
+  counterAudioPlayer1 = 0 ;
+  counterAudioPlayer2 = 0 ;
+  audioPlayers1.add(minim.loadFile("Music/test.wav"));
+  audioPlayers1.add(minim.loadFile("Music/p11.wav"));
+  audioPlayers1.add(minim.loadFile("Music/p12.wav"));
+  audioPlayers2.add(minim.loadFile("Music/p21.wav"));
+  audioPlayers2.add(minim.loadFile("Music/p22.wav"));
+  audioPlayers2.add(minim.loadFile("Music/test.wav"));
 }
 
 void draw()
@@ -174,6 +191,7 @@ void draw()
             setPinState(PLAYER1,rumbleArmLeft,Arduino.HIGH);
           } break;
         }
+        ++stateRumbleChangePlayer;
       }
       if (timerChangementPlayer >= timerBetweenChangementPlayer)
       {
@@ -184,12 +202,7 @@ void draw()
         currentState = stateReproductP2;
         currentTime = 0;
         
-        setPinState(PLAYER1,rumbleThighRight,Arduino.LOW);
-        setPinState(PLAYER1,rumbleThighLeft,Arduino.LOW);
-        setPinState(PLAYER1,rumbleBoobs,Arduino.LOW);
-        setPinState(PLAYER1,rumbleStomach,Arduino.LOW);
-        setPinState(PLAYER1,rumbleArmRight,Arduino.LOW);
-        setPinState(PLAYER1,rumbleArmLeft,Arduino.LOW);
+        stopAllRumble(PLAYER1);
       }
     } break;
     case stateChangePlayerP2toP1:
@@ -215,6 +228,7 @@ void draw()
             setPinState(PLAYER2,rumbleArmLeft,Arduino.HIGH);
           } break;
         }
+        ++stateRumbleChangePlayer;
       }
       if (timerChangementPlayer >= timerBetweenChangementPlayer)
       {
@@ -225,23 +239,93 @@ void draw()
         currentState = stateReproductP1;
         currentTime = 0;
         
-        setPinState(PLAYER2,rumbleThighRight,Arduino.LOW);
-        setPinState(PLAYER2,rumbleThighLeft,Arduino.LOW);
-        setPinState(PLAYER2,rumbleBoobs,Arduino.LOW);
-        setPinState(PLAYER2,rumbleStomach,Arduino.LOW);
-        setPinState(PLAYER2,rumbleArmRight,Arduino.LOW);
-        setPinState(PLAYER2,rumbleArmLeft,Arduino.LOW);
+        current_bpm_index ++;
+        if(current_bpm_index >= BPM.length)
+        {
+          current_bpm_index = BPM.length - 1;
+        }
+        setBPM(BPM[current_bpm_index]);
+        setLedTempo(current_bpm_index);
+        
+        stopAllRumble(PLAYER2);
       }
     } break;
     case stateFailReproductP1:
     {
-      println(currentState);
+      println(currentState); 
+      current_bpm_index = 0;
+      setBPM(BPM[current_bpm_index]);
+      scorePlayer2 ++;
+      sequenceEndRound(PLAYER2,PLAYER1);
+      endRound();
     } break;
     case stateFailReproductP2:
     {
       println(currentState);
+      current_bpm_index = 0;
+      setBPM(BPM[current_bpm_index]);
+      scorePlayer1 ++;
+      sequenceEndRound(PLAYER1,PLAYER2);
+      endRound();
     } break;
   }
+}
+
+void endRound(){
+  roundCount++;
+  if(roundCount <= ledRound.length)
+  {
+    setLedRound(roundCount);z
+    currentState = stateChangePlayerP2toP1;
+    current_bpm_index = 0;
+    currentTime = 0;
+    
+  }else{
+    //end of game
+  }
+}
+void sequenceEndRound(int winner,int looser)
+{
+    setLedRound(roundCount);
+    stopAllLED(PLAYER1);
+    stopAllLED(PLAYER2);
+    stopAllRumble(PLAYER1);
+    stopAllRumble(PLAYER2);
+    fireAllLED(winner);
+    setPinState(looser,rumbleArmRight,Arduino.HIGH);
+    setPinState(looser,rumbleArmLeft,Arduino.HIGH);
+    setPinState(looser,ledArmRight,Arduino.HIGH);
+    setPinState(looser,ledArmLeft,Arduino.HIGH);
+    delay(200);
+    stopAllLED(winner);
+    setPinState(looser,rumbleArmRight,Arduino.LOW);
+    setPinState(looser,rumbleArmLeft,Arduino.LOW);
+    setPinState(looser,ledArmRight,Arduino.LOW);
+    setPinState(looser,ledArmLeft,Arduino.LOW);
+    delay(200);
+    fireAllLED(winner);
+    setPinState(looser,rumbleBoobs,Arduino.HIGH);
+    setPinState(looser,rumbleStomach,Arduino.HIGH);
+    setPinState(looser,ledBoobs,Arduino.HIGH);
+    setPinState(looser,ledStomach,Arduino.HIGH);
+    delay(200);
+    stopAllLED(winner);
+    setPinState(looser,rumbleBoobs,Arduino.LOW);
+    setPinState(looser,rumbleStomach,Arduino.LOW);
+    setPinState(looser,ledBoobs,Arduino.LOW);
+    setPinState(looser,ledStomach,Arduino.LOW);
+    delay(200);
+    fireAllLED(winner);
+    setPinState(looser,rumbleThighRight,Arduino.HIGH);
+    setPinState(looser,rumbleThighLeft,Arduino.HIGH);
+    setPinState(looser,ledThighRight,Arduino.HIGH);
+    setPinState(looser,ledThighLeft,Arduino.HIGH);
+    delay(200);
+    stopAllLED(winner);
+    setPinState(looser,rumbleThighRight,Arduino.LOW);
+    setPinState(looser,rumbleThighLeft,Arduino.LOW);
+    setPinState(looser,ledThighRight,Arduino.LOW);
+    setPinState(looser,ledThighLeft,Arduino.LOW);
 }
 
 void giveTempo()
@@ -253,24 +337,35 @@ void giveTempo()
   {
     canGetInput = true;
     println("Press");
-    // TODO Launch the rumble for the current player and leds for two players be careful with the blank
+    int p = 1;
+    if (currentState == stateReproductP1)
+    {
+      p = PLAYER1;
+    }
+    else if (currentState == stateReproductP2)
+    {
+      p = PLAYER2;
+    }
+    
     if(listInputs.get(currentInput) != blankInput)
     {
-      int p = 1;
-      if (currentState == stateReproductP1)
-      {
-        p = PLAYER1;
-      }
-      else if (currentState == stateReproductP2)
-      {
-        p = PLAYER2;
-      }
       setPinState(p,getLedPin(listInputs.get(currentInput)),Arduino.HIGH);
       setPinState(p,getRumblePin(listInputs.get(currentInput)),Arduino.HIGH);
     }
-    // Launch music feedback tempo
-    audioPlayer.rewind();
-    audioPlayer.play();
+    
+    if(p == PLAYER1)
+    {
+      audioPlayers1.get(counterAudioPlayer1).rewind();
+      audioPlayers1.get(counterAudioPlayer1).play();
+      
+      counterAudioPlayer1 = (counterAudioPlayer1 + 1) % audioPlayers1.size();
+    }else
+    {
+      audioPlayers2.get(counterAudioPlayer2).rewind();
+      audioPlayers2.get(counterAudioPlayer2).play();
+      
+      counterAudioPlayer2 = (counterAudioPlayer2 + 1) % audioPlayers2.size();
+    }
   }
   if (currentTime > tempo + spaceTimeGetInput/2)
   {
@@ -545,6 +640,16 @@ void stopAllLED(int player)
   setPinState(player,ledThighLeft,Arduino.LOW);
 }
 
+void fireAllLED(int player)
+{
+  setPinState(player,ledArmRight,Arduino.HIGH);
+  setPinState(player,ledArmLeft,Arduino.HIGH);
+  setPinState(player,ledBoobs,Arduino.HIGH);
+  setPinState(player,ledStomach,Arduino.HIGH);
+  setPinState(player,ledThighRight,Arduino.HIGH);
+  setPinState(player,ledThighLeft,Arduino.HIGH);
+}
+
 int checkKey(int keyPress)
 {
   if (listInputs.get(currentInput) == keyPress)
@@ -595,12 +700,52 @@ void setPinState(int player,int pin,int value)
   }
 }
 
+void setBPM(int bpm)
+{
+  tempo = 60000 /bpm;
+}
+
+void setLedTempo(int tempoLevel)
+{
+  for(int i = 0 ; i < ledTempo.length ; ++i)
+  {
+    int l = Arduino.LOW;
+    if(tempoLevel < i)
+    {
+      l = Arduino.HIGH;
+    }
+    setPinState(PLAYER1,ledTempo[i],l);
+    setPinState(PLAYER2,ledTempo[i],l);
+  }
+}
+
+void setLedRound(int round)
+{
+  for(int i = 0 ; i < ledRound.length ; ++i)
+  {
+    int lvl = Arduino.LOW;
+    if(round <= i)
+    {
+      lvl = Arduino.HIGH;
+    }
+    setPinState(PLAYER1,ledRound[i],lvl);
+    setPinState(PLAYER2,ledRound[i],lvl);
+    
+  }
+}
+
 void stop()
 {
-  // the AudioPlayer you got from Minim.loadFile()
-  audioPlayer.close();
+  
+  for(int i = 0 ; i < audioPlayers1.size();++i)
+  {
+    audioPlayers1.get(i).close();
+  }
+  for(int i = 0 ; i < audioPlayers2.size();++i)
+  {
+    audioPlayers2.get(i).close();
+  }
   // the AudioInput you got from Minim.getLineIn()
-  input.close();
   minim.stop();
  
   // this calls the stop method that 
