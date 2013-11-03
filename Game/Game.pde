@@ -14,6 +14,7 @@ final int numberInputByMesure = 2;
 final int timerBetweenChangementPlayer = 5000; // Timer in millisecond
 final int timerLaunchRumbleDuringChangementPlayer = 3; // Timer in frame
 final int timerChrismasTree = 500; // Timer in millisecond
+final int timerAudioTalk = 1200;
 
 // State game
 final int stateReproductP1 = 0;
@@ -57,12 +58,12 @@ final int stateGoodPress = 1;
 final int stateFinishPress = 2;
 
 // Rumble pin
-final int rumbleArmRight = 2;
-final int rumbleArmLeft = 3;
-final int rumbleBoobs = 4;
-final int rumbleStomach = 5;
-final int rumbleThighRight = 6;
-final int rumbleThighLeft = 7;
+final int rumbleArmRight = 28;
+final int rumbleArmLeft = 29;
+final int rumbleBoobs = 30;
+final int rumbleStomach = 31;
+final int rumbleThighRight = 32;
+final int rumbleThighLeft = 33;
 
 // Led pin
 final int ledArmRight = 8;
@@ -95,10 +96,12 @@ int playerStartGame;
 // Tempo
 Minim minim;
 
-ArrayList<AudioPlayer> audioPlayers1;
-ArrayList<AudioPlayer> audioPlayers2;
-int counterAudioPlayer1;
-int counterAudioPlayer2;
+ArrayList<ArrayList<AudioPlayer>> audioRythmes;
+AudioPlayer audioPlayer1 , audioPlayer2;
+AudioPlayer audioNextPlayer;
+AudioPlayer audioImpro;
+AudioPlayer audioWin;
+
 
 int prevTime;
 int currentTime;
@@ -119,14 +122,50 @@ void setup()
   
   // Sound
   minim = new Minim(this);
-  audioPlayers1 = new ArrayList<AudioPlayer>();
-  audioPlayers1.add(minim.loadFile("Music/un1.wav"));
-  audioPlayers1.add(minim.loadFile("Music/un2.wav"));
-  audioPlayers1.add(minim.loadFile("Music/un3.wav"));
-  audioPlayers2 = new ArrayList<AudioPlayer>();
-  audioPlayers2.add(minim.loadFile("Music/deux1.wav"));
-  audioPlayers2.add(minim.loadFile("Music/deux2.wav"));
-  audioPlayers2.add(minim.loadFile("Music/deux3.wav"));
+  audioRythmes = new ArrayList<ArrayList<AudioPlayer>>();
+  ArrayList<AudioPlayer> temp =  new ArrayList<AudioPlayer>();
+  audioRythmes.add(temp);
+  //temp.add(minim.loadFile("Music/RythmeWAV/BASS_060.wav"));
+  //temp.add(minim.loadFile("Music/RythmeWAV/INTER_060.wav"));
+  temp.add(minim.loadFile("Music/RythmeWAV/METRO_060.wav"));
+  //temp.add(minim.loadFile("Music/RythmeWAV/RIFF_060.wav"));
+  temp =  new ArrayList<AudioPlayer>();
+  audioRythmes.add(temp);
+  //temp.add(minim.loadFile("Music/RythmeWAV/BASS_080.wav"));
+  //temp.add(minim.loadFile("Music/RythmeWAV/INTER_080.wav"));
+  temp.add(minim.loadFile("Music/RythmeWAV/METRO_080.wav"));
+  //temp.add(minim.loadFile("Music/RythmeWAV/RIFF_080.wav"));
+  temp =  new ArrayList<AudioPlayer>();
+  audioRythmes.add(temp);
+  //temp.add(minim.loadFile("Music/RythmeWAV/BASS_100.wav"));
+  //temp.add(minim.loadFile("Music/RythmeWAV/INTER_100.wav"));
+  //temp.add(minim.loadFile("Music/RythmeWAV/METRO_100.wav"));
+  temp.add(minim.loadFile("Music/RythmeWAV/RIFF_100.wav"));
+  temp =  new ArrayList<AudioPlayer>();
+  audioRythmes.add(temp);
+  //temp.add(minim.loadFile("Music/RythmeWAV/BASS_138.wav"));
+  //temp.add(minim.loadFile("Music/RythmeWAV/INTER_138.wav"));
+  temp.add(minim.loadFile("Music/RythmeWAV/METRO_138.wav"));
+  //temp.add(minim.loadFile("Music/RythmeWAV/RIFF_138.wav"));
+  temp =  new ArrayList<AudioPlayer>();
+  audioRythmes.add(temp);
+  //temp.add(minim.loadFile("Music/RythmeWAV/BASS_184.wav"));
+  //temp.add(minim.loadFile("Music/RythmeWAV/INTER_184.wav"));
+  temp.add(minim.loadFile("Music/RythmeWAV/METRO_184.wav"));
+  //temp.add(minim.loadFile("Music/RythmeWAV/RIFF_184.wav"));
+  temp =  new ArrayList<AudioPlayer>();
+  audioRythmes.add(temp);
+  //temp.add(minim.loadFile("Music/RythmeWAV/BASS_200.wav"));
+  //temp.add(minim.loadFile("Music/RythmeWAV/INTER_200.wav"));
+  temp.add(minim.loadFile("Music/RythmeWAV/METRO_200.wav"));
+  //temp.add(minim.loadFile("Music/RythmeWAV/RIFF_200.wav"));
+  
+  audioPlayer1 = minim.loadFile("Music/VoixWAV/PLAYER1_PLAY.wav") ; 
+  audioPlayer2 = minim.loadFile("Music/VoixWAV/PLAYER2_PLAY.wav") ;
+  audioNextPlayer = minim.loadFile("Music/VoixWAV/NEXTPLAYER.wav") ;
+  audioImpro = minim.loadFile("Music/VoixWAV/IMPRO.wav") ;
+  audioWin = minim.loadFile("Music/VoixWAV/WIN.wav") ;
+  
 }
 
 void initGame()
@@ -147,8 +186,6 @@ void initGame()
   currentTime = 0;
   current_bpm_index = 0;
   setBPM(BPM[current_bpm_index]);
-  counterAudioPlayer1 = 0 ;
-  counterAudioPlayer2 = 0 ;
   
   // Stop all led of tempo
   for(int i = 0 ; i < ledTempo.length ; ++i)
@@ -172,15 +209,25 @@ void draw()
     case stateChangePlayerP1toP2:
     {
       println("Wait next player");
+      audioNextPlayer.rewind();
+      audioNextPlayer.play();
+      delay(timerAudioTalk);
       delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(PLAYER1,rumbleThighRight,Arduino.HIGH);
-      setPinState(PLAYER1,rumbleThighLeft,Arduino.HIGH);
+      setPinState(PLAYER2,rumbleThighRight,Arduino.HIGH);
+      setPinState(PLAYER2,rumbleThighLeft,Arduino.HIGH);
       delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(PLAYER1,rumbleBoobs,Arduino.HIGH);
-      setPinState(PLAYER1,rumbleStomach,Arduino.HIGH);
+      setPinState(PLAYER2,rumbleBoobs,Arduino.HIGH);
+      setPinState(PLAYER2,rumbleStomach,Arduino.HIGH);
+      
+      audioPlayer1.rewind();
+      audioPlayer1.play();
+      
       delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(PLAYER1,rumbleArmRight,Arduino.HIGH);
-      setPinState(PLAYER1,rumbleArmLeft,Arduino.HIGH);
+      setPinState(PLAYER2,rumbleArmRight,Arduino.HIGH);
+      setPinState(PLAYER2,rumbleArmLeft,Arduino.HIGH);
+      delay(timerLaunchRumbleDuringChangementPlayer);
+      stopAllRumble(PLAYER2);
+      stopAllLED(PLAYER2);
       delay(timerBetweenChangementPlayer);
       
       println("Player 2");
@@ -189,20 +236,29 @@ void draw()
       currentState = stateReproductP2;
       currentTime = 0;
       prevTime = millis();
-      stopAllRumble(PLAYER1);
     } break;
     case stateChangePlayerP2toP1:
     {
       println("Wait next player");
+      audioNextPlayer.rewind();
+      audioNextPlayer.play();
+      delay(timerAudioTalk);
       delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(PLAYER2,rumbleThighRight,Arduino.HIGH);
-      setPinState(PLAYER2,rumbleThighLeft,Arduino.HIGH);
+      setPinState(PLAYER1,rumbleThighRight,Arduino.HIGH);
+      setPinState(PLAYER1,rumbleThighLeft,Arduino.HIGH);
       delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(PLAYER2,rumbleBoobs,Arduino.HIGH);
-      setPinState(PLAYER2,rumbleStomach,Arduino.HIGH);
+      setPinState(PLAYER1,rumbleBoobs,Arduino.HIGH);
+      setPinState(PLAYER1,rumbleStomach,Arduino.HIGH);
+      
+      audioPlayer2.rewind();
+      audioPlayer2.play();
+      
+      
       delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(PLAYER2,rumbleArmRight,Arduino.HIGH);
-      setPinState(PLAYER2,rumbleArmLeft,Arduino.HIGH);
+      setPinState(PLAYER1,rumbleArmRight,Arduino.HIGH);
+      setPinState(PLAYER1,rumbleArmLeft,Arduino.HIGH);
+      stopAllRumble(PLAYER1);
+      stopAllLED(PLAYER1);
       delay(timerBetweenChangementPlayer);
       
       println("Player 1");
@@ -224,11 +280,13 @@ void draw()
     } break;
     case stateFailReproductP1:
     {
+      println("P1 lose");
       sequenceEndRound(PLAYER2,PLAYER1);
       endRound();
     } break;
     case stateFailReproductP2:
     {
+      println("P2 lose");
       sequenceEndRound(PLAYER1,PLAYER2);
       endRound();
     } break;
@@ -238,20 +296,27 @@ void draw()
 void endRound()
 {
   initGame();
+  println(listInputs);
   if (playerStartGame == PLAYER1)
   {
     playerStartGame = PLAYER2;
     currentState = stateReproductP2;
+    println("Player 2");
   }
   else
   {
     playerStartGame = PLAYER1;
     currentState = stateReproductP1;
+    println("Player 1");
   }
 }
 
 void sequenceEndRound(int winner,int looser)
 {
+    audioImpro.pause();
+    audioWin.rewind();
+    audioWin.play();
+      
     stopAllLED(PLAYER1);
     stopAllLED(PLAYER2);
     stopAllRumble(PLAYER1);
@@ -305,10 +370,13 @@ void giveTempo()
     // Tempo player
     if (currentState == stateReproductP1 || currentState == stateRecordP1)
     {
-      audioPlayers1.get(counterAudioPlayer1).rewind();
-      audioPlayers1.get(counterAudioPlayer1).play();
+      for(int i = 0 ; i < audioRythmes.get(current_bpm_index).size();++i)
+      { 
+        audioRythmes.get(current_bpm_index).get(i).rewind();
+        audioRythmes.get(current_bpm_index).get(i).play();
+      }
+     
       
-      counterAudioPlayer1 = (counterAudioPlayer1 + 1) % audioPlayers1.size();
       
       if(currentState == stateReproductP1 && listInputs.get(currentInput) != blankInput)
       {
@@ -318,10 +386,9 @@ void giveTempo()
     }
     else
     {
-      audioPlayers2.get(counterAudioPlayer2).rewind();
-      audioPlayers2.get(counterAudioPlayer2).play();
+      audioRythmes.get(current_bpm_index).get(0).rewind();
+      audioRythmes.get(current_bpm_index).get(0).play();
       
-      counterAudioPlayer2 = (counterAudioPlayer2 + 1) % audioPlayers2.size();
       
       if(currentState == stateReproductP2 && listInputs.get(currentInput) != blankInput)
       {
@@ -347,11 +414,15 @@ void giveTempo()
           {
             stateFail = stateFailReproductP1;
             stateFinish = stateRecordP1;
+            audioImpro.rewind();
+            audioImpro.play();
           }
           else
           {
             stateFail = stateFailReproductP2;
             stateFinish = stateRecordP2;
+            audioImpro.rewind();
+            audioImpro.play();
           }
           // Check key
           switch(checkKey(blankInput))
@@ -402,6 +473,7 @@ void giveTempo()
 
 void keyPressed()
 {
+  println(key);
   int currentGeneralInputPress = getGeneralInput(key, ((currentState == stateReproductP1 || currentState == stateRecordP1) ? PLAYER1 : PLAYER2));
   if (canGetInput && currentGeneralInputPress != -1)
   {
@@ -687,13 +759,12 @@ void setLedTempo(int tempoLevel)
 
 void stop()
 {
-  for(int i = 0 ; i < audioPlayers1.size();++i)
+  for(int i = 0 ; i < audioRythmes.size();++i)
   {
-    audioPlayers1.get(i).close();
-  }
-  for(int i = 0 ; i < audioPlayers2.size();++i)
-  {
-    audioPlayers2.get(i).close();
+    for(int j = 0 ; j < audioRythmes.get(i).size(); ++j)
+    {
+       audioRythmes.get(i).get(j).close();
+    }
   }
   // the AudioInput you got from Minim.getLineIn()
   minim.stop();
