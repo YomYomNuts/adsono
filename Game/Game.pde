@@ -58,12 +58,12 @@ final int stateGoodPress = 1;
 final int stateFinishPress = 2;
 
 // Rumble pin
-final int rumbleArmRight = 28;
-final int rumbleArmLeft = 29;
-final int rumbleBoobs = 30;
-final int rumbleStomach = 31;
-final int rumbleThighRight = 32;
-final int rumbleThighLeft = 33;
+final int rumbleArmRight = 48;
+final int rumbleArmLeft = 49;
+final int rumbleBoobs = 50;
+final int rumbleStomach = 51;
+final int rumbleThighRight = 52;
+final int rumbleThighLeft = 53;
 
 // Led pin
 final int ledArmRight = 8;
