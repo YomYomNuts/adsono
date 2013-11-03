@@ -101,6 +101,8 @@ AudioPlayer audioPlayer1 , audioPlayer2;
 AudioPlayer audioNextPlayer;
 AudioPlayer audioImpro;
 AudioPlayer audioWin;
+AudioPlayer audioAreYouReady;
+AudioPlayer audioStrat;
 
 
 int prevTime;
@@ -110,15 +112,7 @@ int delta;
 
 void setup()
 {
-  // Init the arduinos
-  println(Arduino.list());
-  arduinoP1 = new Arduino(this, Arduino.list()[0]);
-  arduinoP2 = new Arduino(this, Arduino.list()[1]);
   
-  // Init var game
-  listInputs = new IntList();
-  initGame();
-  playerStartGame = PLAYER1;
   
   // Sound
   minim = new Minim(this);
@@ -165,7 +159,19 @@ void setup()
   audioNextPlayer = minim.loadFile("Music/VoixWAV/NEXTPLAYER.wav") ;
   audioImpro = minim.loadFile("Music/VoixWAV/IMPRO.wav") ;
   audioWin = minim.loadFile("Music/VoixWAV/WIN.wav") ;
+  audioAreYouReady = minim.loadFile("Music/VoixWAV/AREYOUREADY.wav");
+  audioStrat = minim.loadFile("Music/VoixWAV/START.wav");
   
+  
+  // Init the arduinos
+  println(Arduino.list());
+  arduinoP1 = new Arduino(this, Arduino.list()[0]);
+  arduinoP2 = new Arduino(this, Arduino.list()[1]);
+  
+  // Init var game
+  listInputs = new IntList();
+  initGame();
+  playerStartGame = PLAYER1;
 }
 
 void initGame()
@@ -193,6 +199,17 @@ void initGame()
     setPinState(PLAYER1,ledTempo[i],Arduino.HIGH);
     setPinState(PLAYER2,ledTempo[i],Arduino.HIGH);
   }
+  
+  //warn players that the game will start
+  
+  audioAreYouReady.rewind();
+  audioAreYouReady.play();
+  delay(timerAudioTalk);
+  
+  audioStrat.rewind();
+  audioStrat.play();
+  delay(timerAudioTalk);
+  
 }
 
 void draw()
@@ -301,13 +318,13 @@ void endRound()
   {
     playerStartGame = PLAYER2;
     currentState = stateReproductP2;
-    println("Player 2");
+    println("Player 2 Turn");
   }
   else
   {
     playerStartGame = PLAYER1;
     currentState = stateReproductP1;
-    println("Player 1");
+    println("Player 1 Turn");
   }
 }
 
