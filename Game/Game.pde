@@ -58,19 +58,19 @@ final int stateGoodPress = 1;
 final int stateFinishPress = 2;
 
 // Rumble pin
-final int rumbleArmRight = 48;
-final int rumbleArmLeft = 49;
-final int rumbleBoobs = 50;
-final int rumbleStomach = 51;
-final int rumbleThighRight = 52;
-final int rumbleThighLeft = 53;
+final int rumbleArmRight = 28;
+final int rumbleArmLeft = 29;
+final int rumbleBoobs = 30;
+final int rumbleStomach = 31;
+final int rumbleThighRight = 32;
+final int rumbleThighLeft = 33;
 
 // Led pin
 final int ledArmRight = 8;
 final int ledArmLeft = 9;
 final int ledBoobs = 10;
 final int ledStomach = 11;
-final int ledThighRight = 12;
+final int ledThighRight = 7;
 final int ledThighLeft = 13;
 
 // arduino id
@@ -317,6 +317,7 @@ void sequenceEndRound(int winner,int looser)
     audioWin.rewind();
     audioWin.play();
       
+     delay(timerAudioTalk);
     stopAllLED(PLAYER1);
     stopAllLED(PLAYER2);
     stopAllRumble(PLAYER1);
@@ -328,6 +329,8 @@ void sequenceEndRound(int winner,int looser)
     setPinState(looser,ledArmLeft,Arduino.HIGH);
     delay(timerChrismasTree);
     stopAllLED(winner);
+    
+    
     setPinState(looser,rumbleArmRight,Arduino.LOW);
     setPinState(looser,rumbleArmLeft,Arduino.LOW);
     setPinState(looser,ledArmRight,Arduino.LOW);
