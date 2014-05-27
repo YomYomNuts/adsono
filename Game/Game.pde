@@ -22,12 +22,12 @@ final int numberBlinkVictory = 3;
 
 // Sounds
 final String BGSound = "Music/background.wav";
-final String buttonArmRightPinkSound = "Music/inputs/Fx_input (1).wav";
-final String buttonArmLeftOrangeSound = "Music/inputs/Fx_input (2).wav";
-final String buttonBoobsBlueSound = "Music/inputs/Fx_input (3).wav";
-final String buttonStomachRedSound = "Music/inputs/Fx_input (4).wav";
-final String buttonThighRightYellowSound = "Music/inputs/Fx_input (5).wav";
-final String buttonThighLeftGreenSound = "Music/inputs/Fx_input (6).wav";
+final String buttonArmRightYellowSound = "Music/inputs/Fx_input (1).wav";
+final String buttonArmLeftGreenSound = "Music/inputs/Fx_input (2).wav";
+final String buttonBoobsRedSound = "Music/inputs/Fx_input (3).wav";
+final String buttonStomachBlueSound = "Music/inputs/Fx_input (4).wav";
+final String buttonThighRightPinkSound = "Music/inputs/Fx_input (5).wav";
+final String buttonThighLeftOrangeSound = "Music/inputs/Fx_input (6).wav";
 final String metronomeJ1Sound = "Music/metroJ1.wav";
 final String metronomeJ2Sound = "Music/metroJ2.wav";
 final String introSound = "Music/voices/impro.wav";
@@ -55,12 +55,12 @@ final int stateFailReproductP1 = 6;
 final int stateFailReproductP2 = 7;
 
 // Correlation input
-final int buttonArmRightPink = 0;
-final int buttonArmLeftOrange = 1;
-final int buttonBoobsBlue = 2;
-final int buttonStomachRed = 3;
-final int buttonThighRightYellow = 4;
-final int buttonThighLeftGreen = 5;
+final int buttonArmRightYellow = 0;
+final int buttonArmLeftGreen = 1;
+final int buttonBoobsRed = 2;
+final int buttonStomachBlue = 3;
+final int buttonThighRightPink = 4;
+final int buttonThighLeftOrange = 5;
 final int blankInput = 6;
 final int numberInputs = 7;
 final int valuePressButtonAnalog = 1020;
@@ -71,20 +71,20 @@ final int stateGoodPress = 1;
 final int stateFinishPress = 2;
 
 // Rumble pin
-final int rumbleArmRightPink = 2;
-final int rumbleArmLeftOrange = 3;
-final int rumbleBoobsBlue = 4;
-final int rumbleStomachRed = 5;
-final int rumbleThighRightYellow = 6;
-final int rumbleThighLeftGreen = 7;
+final int rumbleArmRightYellow = 2;
+final int rumbleArmLeftGreen = 3;
+final int rumbleBoobsRed = 4;
+final int rumbleStomachBlue = 5;
+final int rumbleThighRightPink = 6;
+final int rumbleThighLeftOrange = 7;
 
 // Led pin
-final int ledArmRightPink = 49;
-final int ledArmLeftOrange = 48;
-final int ledBoobsBlue = 47;
-final int ledStomachRed = 46;
-final int ledThighRightYellow = 45;
-final int ledThighLeftGreen = 44;
+final int ledArmRightYellow = 49;
+final int ledArmLeftGreen = 48;
+final int ledBoobsRed = 47;
+final int ledStomachBlue = 46;
+final int ledThighRightPink = 45;
+final int ledThighLeftOrange = 44;
 
 // arduino id
 final int PLAYER1 = 0;
@@ -109,9 +109,9 @@ boolean waitNextTempo;
 int currentInput;
 int current_bpm_index;
 int playerStartGame;
+
 // Music
 Minim minim;
-
 AudioPlayer audioBG;
 ArrayList<AudioPlayer> audioInputs;
 ArrayList<AudioPlayer> audioMetros;
@@ -123,7 +123,7 @@ AudioPlayer audioFill;
 AudioPlayer audioRecord;
 AudioPlayer audioError;
 
-
+// Tempo
 int prevTime;
 int currentTime;
 int tempo;
@@ -138,12 +138,12 @@ void setup()
   audioBG.loop();
   
   audioInputs = new ArrayList<AudioPlayer>();
-  audioInputs.add(minim.loadFile(buttonArmRightPinkSound));
-  audioInputs.add(minim.loadFile(buttonArmLeftOrangeSound));
-  audioInputs.add(minim.loadFile(buttonBoobsBlueSound));
-  audioInputs.add(minim.loadFile(buttonStomachRedSound));
-  audioInputs.add(minim.loadFile(buttonThighRightYellowSound));
-  audioInputs.add(minim.loadFile(buttonThighLeftGreenSound));
+  audioInputs.add(minim.loadFile(buttonArmRightYellowSound));
+  audioInputs.add(minim.loadFile(buttonArmLeftGreenSound));
+  audioInputs.add(minim.loadFile(buttonBoobsRedSound));
+  audioInputs.add(minim.loadFile(buttonStomachBlueSound));
+  audioInputs.add(minim.loadFile(buttonThighRightPinkSound));
+  audioInputs.add(minim.loadFile(buttonThighLeftOrangeSound));
   
   audioMetros = new ArrayList<AudioPlayer>();
   audioMetros.add(minim.loadFile(metronomeJ1Sound));
@@ -164,20 +164,20 @@ void setup()
   
   // Init analog tab
   currentPinPressP1 = -1;
-  valueAnalogButtonP1[buttonArmRightPink] = 0;
-  valueAnalogButtonP1[buttonArmLeftOrange] = 0;
-  valueAnalogButtonP1[buttonBoobsBlue] = 0;
-  valueAnalogButtonP1[buttonStomachRed] = 0;
-  valueAnalogButtonP1[buttonThighRightYellow] = 0;
-  valueAnalogButtonP1[buttonThighLeftGreen] = 0;
+  valueAnalogButtonP1[buttonArmRightYellow] = 0;
+  valueAnalogButtonP1[buttonArmLeftGreen] = 0;
+  valueAnalogButtonP1[buttonBoobsRed] = 0;
+  valueAnalogButtonP1[buttonStomachBlue] = 0;
+  valueAnalogButtonP1[buttonThighRightPink] = 0;
+  valueAnalogButtonP1[buttonThighLeftOrange] = 0;
   
   currentPinPressP2 = -1;
-  valueAnalogButtonP2[buttonArmRightPink] = 0;
-  valueAnalogButtonP2[buttonArmLeftOrange] = 0;
-  valueAnalogButtonP2[buttonBoobsBlue] = 0;
-  valueAnalogButtonP2[buttonStomachRed] = 0;
-  valueAnalogButtonP2[buttonThighRightYellow] = 0;
-  valueAnalogButtonP2[buttonThighLeftGreen] = 0;
+  valueAnalogButtonP2[buttonArmRightYellow] = 0;
+  valueAnalogButtonP2[buttonArmLeftGreen] = 0;
+  valueAnalogButtonP2[buttonBoobsRed] = 0;
+  valueAnalogButtonP2[buttonStomachBlue] = 0;
+  valueAnalogButtonP2[buttonThighRightPink] = 0;
+  valueAnalogButtonP2[buttonThighLeftOrange] = 0;
   
   // Init var game
   listInputs = new IntList();
@@ -196,8 +196,8 @@ void initGame()
   // Add the first input
   listInputs.clear();
   listInputs.append((int)random(numberInputs-1));
-  //if (listInputs.get(0) == buttonArmLeftOrange)
-  //  listInputs.set(0, buttonArmLeftOrange + 1);
+  //if (listInputs.get(0) == buttonArmLeftGreen)
+  //  listInputs.set(0, buttonArmLeftGreen + 1);
   int pinLed = getLedPin(listInputs.get(0));
   if (pinLed != -1)
   {
@@ -215,8 +215,8 @@ void initGame()
   delay(timerLEDLowDuringComputerRandom);
   
   listInputs.append((int)random(numberInputs-1));
-  //if (listInputs.get(1) == buttonArmLeftOrange)
-  //  listInputs.set(1, buttonArmLeftOrange + 1);
+  //if (listInputs.get(1) == buttonArmLeftGreen)
+  //  listInputs.set(1, buttonArmLeftGreen + 1);
   pinLed = getLedPin(listInputs.get(1));
   if (pinLed != -1)
   {
@@ -277,15 +277,15 @@ void draw()
     {
       println("Wait next player");
       delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(PLAYER2,rumbleThighRightYellow,Arduino.HIGH);
-      setPinState(PLAYER2,rumbleThighLeftGreen,Arduino.HIGH);
+      setPinState(PLAYER2,rumbleThighRightPink,Arduino.HIGH);
+      setPinState(PLAYER2,rumbleThighLeftOrange,Arduino.HIGH);
       delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(PLAYER2,rumbleBoobsBlue,Arduino.HIGH);
-      setPinState(PLAYER2,rumbleStomachRed,Arduino.HIGH);
+      setPinState(PLAYER2,rumbleBoobsRed,Arduino.HIGH);
+      setPinState(PLAYER2,rumbleStomachBlue,Arduino.HIGH);
       
       delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(PLAYER2,rumbleArmRightPink,Arduino.HIGH);
-      setPinState(PLAYER2,rumbleArmLeftOrange,Arduino.HIGH);
+      setPinState(PLAYER2,rumbleArmRightYellow,Arduino.HIGH);
+      setPinState(PLAYER2,rumbleArmLeftGreen,Arduino.HIGH);
       delay(timerLaunchRumbleDuringChangementPlayer);
       stopAllRumble(PLAYER2);
       stopAllLED(PLAYER2);
@@ -320,15 +320,15 @@ void draw()
     {
       println("Wait next player");
       delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(PLAYER1,rumbleThighRightYellow,Arduino.HIGH);
-      setPinState(PLAYER1,rumbleThighLeftGreen,Arduino.HIGH);
+      setPinState(PLAYER1,rumbleThighRightPink,Arduino.HIGH);
+      setPinState(PLAYER1,rumbleThighLeftOrange,Arduino.HIGH);
       delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(PLAYER1,rumbleBoobsBlue,Arduino.HIGH);
-      setPinState(PLAYER1,rumbleStomachRed,Arduino.HIGH);
+      setPinState(PLAYER1,rumbleBoobsRed,Arduino.HIGH);
+      setPinState(PLAYER1,rumbleStomachBlue,Arduino.HIGH);
       
       delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(PLAYER1,rumbleArmRightPink,Arduino.HIGH);
-      setPinState(PLAYER1,rumbleArmLeftOrange,Arduino.HIGH);
+      setPinState(PLAYER1,rumbleArmRightYellow,Arduino.HIGH);
+      setPinState(PLAYER1,rumbleArmLeftGreen,Arduino.HIGH);
       stopAllRumble(PLAYER1);
       stopAllLED(PLAYER1);
       delay(timerLaunchRumbleDuringChangementPlayer);
@@ -431,7 +431,7 @@ void giveTempo()
         int pinLed = getLedPin(listInputs.get(currentInput));
         int pinRumble = getRumblePin(listInputs.get(currentInput));
         if (pinLed != -1)
-          setPinState(PLAYER1,pinLed,Arduino.HIGH);
+          setPinState(PLAYER2,pinLed,Arduino.HIGH);
         if (pinRumble != -1)
           setPinState(PLAYER1,pinRumble,Arduino.HIGH);
       }
@@ -446,7 +446,7 @@ void giveTempo()
         int pinLed = getLedPin(listInputs.get(currentInput));
         int pinRumble = getRumblePin(listInputs.get(currentInput));
         if (pinLed != -1)
-          setPinState(PLAYER2,pinLed,Arduino.HIGH);
+          setPinState(PLAYER1,pinLed,Arduino.HIGH);
         if (pinRumble != -1)
           setPinState(PLAYER2,pinRumble,Arduino.HIGH);
       }
@@ -459,7 +459,7 @@ void giveTempo()
       int pinLed = getLedPin(listInputs.get(currentInput));
       int pinRumble = getRumblePin(listInputs.get(currentInput));
       if (pinLed != -1)
-        setPinState(PLAYER1,pinLed,Arduino.LOW);
+        setPinState(PLAYER2,pinLed,Arduino.LOW);
       if (pinRumble != -1)
         setPinState(PLAYER1,pinRumble,Arduino.LOW);
     }
@@ -468,7 +468,7 @@ void giveTempo()
       int pinLed = getLedPin(listInputs.get(currentInput));
       int pinRumble = getRumblePin(listInputs.get(currentInput));
       if (pinLed != -1)
-        setPinState(PLAYER2,pinLed,Arduino.LOW);
+        setPinState(PLAYER1,pinLed,Arduino.LOW);
       if (pinRumble != -1)
         setPinState(PLAYER2,pinRumble,Arduino.LOW);
     }
@@ -652,99 +652,93 @@ void buttonPressed()
 
 int getGeneralInput(int player)
 {
-  if (player == PLAYER1)
+  if (currentPinPressP1 != -1)
   {
-    if (currentPinPressP1 != -1)
+    if (arduinoP1.analogRead(currentPinPressP1) >= valuePressButtonAnalog)
     {
-      if (arduinoP1.analogRead(currentPinPressP1) >= valuePressButtonAnalog)
-      {
-        println("currentPinPressP1");
-        return currentPinPressP1;
-      }
-    }
-    if (arduinoP1.analogRead(buttonArmRightPink) >= valuePressButtonAnalog && valueAnalogButtonP1[buttonArmRightPink] < valuePressButtonAnalog)
-    {
-      valueAnalogButtonP1[buttonArmRightPink] = arduinoP1.analogRead(buttonArmRightPink);
-      currentPinPressP1 = buttonArmRightPink;
-      return buttonArmRightPink;
-    }
-    else if (arduinoP1.analogRead(buttonArmLeftOrange) >= valuePressButtonAnalog && valueAnalogButtonP1[buttonArmLeftOrange] < valuePressButtonAnalog)
-    {
-      valueAnalogButtonP1[buttonArmLeftOrange] = arduinoP1.analogRead(buttonArmLeftOrange);
-      currentPinPressP1 = buttonArmLeftOrange;
-      return buttonArmLeftOrange;
-    }
-    else if (arduinoP1.analogRead(buttonBoobsBlue) >= valuePressButtonAnalog && valueAnalogButtonP1[buttonBoobsBlue] < valuePressButtonAnalog)
-    {
-      valueAnalogButtonP1[buttonBoobsBlue] = arduinoP1.analogRead(buttonBoobsBlue);
-      currentPinPressP1 = buttonBoobsBlue;
-      return buttonBoobsBlue;
-    }
-    else if (arduinoP1.analogRead(buttonStomachRed) >= valuePressButtonAnalog && valueAnalogButtonP1[buttonStomachRed] < valuePressButtonAnalog)
-    {
-      valueAnalogButtonP1[buttonStomachRed] = arduinoP1.analogRead(buttonStomachRed);
-      currentPinPressP1 = buttonStomachRed;
-      return buttonStomachRed;
-    }
-    else if (arduinoP1.analogRead(buttonThighRightYellow) >= valuePressButtonAnalog && valueAnalogButtonP1[buttonThighRightYellow] < valuePressButtonAnalog)
-    {
-      valueAnalogButtonP1[buttonThighRightYellow] = arduinoP1.analogRead(buttonThighRightYellow);
-      currentPinPressP1 = buttonThighRightYellow;
-      return buttonThighRightYellow;
-    }
-    else if (arduinoP1.analogRead(buttonThighLeftGreen) >= valuePressButtonAnalog && valueAnalogButtonP1[buttonThighLeftGreen] < valuePressButtonAnalog)
-    {
-      valueAnalogButtonP1[buttonThighLeftGreen] = arduinoP1.analogRead(buttonThighLeftGreen);
-      currentPinPressP1 = buttonThighLeftGreen;
-      return buttonThighLeftGreen;
+      println("currentPinPressP1");
+      return currentPinPressP1;
     }
   }
-  else
+  if (arduinoP1.analogRead(buttonArmRightYellow) >= valuePressButtonAnalog && valueAnalogButtonP1[buttonArmRightYellow] < valuePressButtonAnalog)
   {
-    if (currentPinPressP2 != -1)
+    valueAnalogButtonP1[buttonArmRightYellow] = arduinoP1.analogRead(buttonArmRightYellow);
+    currentPinPressP1 = buttonArmRightYellow;
+    return buttonArmRightYellow;
+  }
+  else if (arduinoP1.analogRead(buttonArmLeftGreen) >= valuePressButtonAnalog && valueAnalogButtonP1[buttonArmLeftGreen] < valuePressButtonAnalog)
+  {
+    valueAnalogButtonP1[buttonArmLeftGreen] = arduinoP1.analogRead(buttonArmLeftGreen);
+    currentPinPressP1 = buttonArmLeftGreen;
+    return buttonArmLeftGreen;
+  }
+  else if (arduinoP1.analogRead(buttonBoobsRed) >= valuePressButtonAnalog && valueAnalogButtonP1[buttonBoobsRed] < valuePressButtonAnalog)
+  {
+    valueAnalogButtonP1[buttonBoobsRed] = arduinoP1.analogRead(buttonBoobsRed);
+    currentPinPressP1 = buttonBoobsRed;
+    return buttonBoobsRed;
+  }
+  else if (arduinoP1.analogRead(buttonStomachBlue) >= valuePressButtonAnalog && valueAnalogButtonP1[buttonStomachBlue] < valuePressButtonAnalog)
+  {
+    valueAnalogButtonP1[buttonStomachBlue] = arduinoP1.analogRead(buttonStomachBlue);
+    currentPinPressP1 = buttonStomachBlue;
+    return buttonStomachBlue;
+  }
+  else if (arduinoP1.analogRead(buttonThighRightPink) >= valuePressButtonAnalog && valueAnalogButtonP1[buttonThighRightPink] < valuePressButtonAnalog)
+  {
+    valueAnalogButtonP1[buttonThighRightPink] = arduinoP1.analogRead(buttonThighRightPink);
+    currentPinPressP1 = buttonThighRightPink;
+    return buttonThighRightPink;
+  }
+  else if (arduinoP1.analogRead(buttonThighLeftOrange) >= valuePressButtonAnalog && valueAnalogButtonP1[buttonThighLeftOrange] < valuePressButtonAnalog)
+  {
+    valueAnalogButtonP1[buttonThighLeftOrange] = arduinoP1.analogRead(buttonThighLeftOrange);
+    currentPinPressP1 = buttonThighLeftOrange;
+    return buttonThighLeftOrange;
+  }
+  if (currentPinPressP2 != -1)
+  {
+    if (arduinoP2.analogRead(currentPinPressP2) >= valuePressButtonAnalog)
     {
-      if (arduinoP2.analogRead(currentPinPressP2) >= valuePressButtonAnalog)
-      {
-        println("currentPinPressP2");
-        return currentPinPressP2;
-      }
+      println("currentPinPressP2");
+      return currentPinPressP2;
     }
-    if (arduinoP2.analogRead(buttonArmRightPink) >= valuePressButtonAnalog && valueAnalogButtonP2[buttonArmRightPink] < valuePressButtonAnalog)
-    {
-      valueAnalogButtonP2[buttonArmRightPink] = arduinoP2.analogRead(buttonArmRightPink);
-      currentPinPressP2 = buttonArmRightPink;
-      return buttonArmRightPink;
-    }
-    else if (arduinoP2.analogRead(buttonArmLeftOrange) >= valuePressButtonAnalog && valueAnalogButtonP2[buttonArmLeftOrange] < valuePressButtonAnalog)
-    {
-      valueAnalogButtonP2[buttonArmLeftOrange] = arduinoP2.analogRead(buttonArmLeftOrange);
-      currentPinPressP2 = buttonArmRightPink;
-      return buttonArmLeftOrange;
-    }
-    else if (arduinoP2.analogRead(buttonBoobsBlue) >= valuePressButtonAnalog && valueAnalogButtonP2[buttonBoobsBlue] < valuePressButtonAnalog)
-    {
-      valueAnalogButtonP2[buttonBoobsBlue] = arduinoP2.analogRead(buttonBoobsBlue);
-      currentPinPressP2 = buttonBoobsBlue;
-      return buttonBoobsBlue;
-    }
-    else if (arduinoP2.analogRead(buttonStomachRed) >= valuePressButtonAnalog && valueAnalogButtonP2[buttonStomachRed] < valuePressButtonAnalog)
-    {
-      valueAnalogButtonP2[buttonStomachRed] = arduinoP2.analogRead(buttonStomachRed);
-      currentPinPressP2 = buttonStomachRed;
-      return buttonStomachRed;
-    }
-    else if (arduinoP2.analogRead(buttonThighRightYellow) >= valuePressButtonAnalog && valueAnalogButtonP2[buttonThighRightYellow] < valuePressButtonAnalog)
-    {
-      valueAnalogButtonP2[buttonThighRightYellow] = arduinoP2.analogRead(buttonThighRightYellow);
-      currentPinPressP2 = buttonThighRightYellow;
-      return buttonThighRightYellow;
-    }
-    else if (arduinoP2.analogRead(buttonThighLeftGreen) >= valuePressButtonAnalog && valueAnalogButtonP2[buttonThighLeftGreen] < valuePressButtonAnalog)
-    {
-      valueAnalogButtonP2[buttonThighLeftGreen] = arduinoP2.analogRead(buttonThighLeftGreen);
-      currentPinPressP2 = buttonThighLeftGreen;
-      return buttonThighLeftGreen;
-    }
+  }
+  if (arduinoP2.analogRead(buttonArmRightYellow) >= valuePressButtonAnalog && valueAnalogButtonP2[buttonArmRightYellow] < valuePressButtonAnalog)
+  {
+    valueAnalogButtonP2[buttonArmRightYellow] = arduinoP2.analogRead(buttonArmRightYellow);
+    currentPinPressP2 = buttonArmRightYellow;
+    return buttonArmRightYellow;
+  }
+  else if (arduinoP2.analogRead(buttonArmLeftGreen) >= valuePressButtonAnalog && valueAnalogButtonP2[buttonArmLeftGreen] < valuePressButtonAnalog)
+  {
+    valueAnalogButtonP2[buttonArmLeftGreen] = arduinoP2.analogRead(buttonArmLeftGreen);
+    currentPinPressP2 = buttonArmRightYellow;
+    return buttonArmLeftGreen;
+  }
+  else if (arduinoP2.analogRead(buttonBoobsRed) >= valuePressButtonAnalog && valueAnalogButtonP2[buttonBoobsRed] < valuePressButtonAnalog)
+  {
+    valueAnalogButtonP2[buttonBoobsRed] = arduinoP2.analogRead(buttonBoobsRed);
+    currentPinPressP2 = buttonBoobsRed;
+    return buttonBoobsRed;
+  }
+  else if (arduinoP2.analogRead(buttonStomachBlue) >= valuePressButtonAnalog && valueAnalogButtonP2[buttonStomachBlue] < valuePressButtonAnalog)
+  {
+    valueAnalogButtonP2[buttonStomachBlue] = arduinoP2.analogRead(buttonStomachBlue);
+    currentPinPressP2 = buttonStomachBlue;
+    return buttonStomachBlue;
+  }
+  else if (arduinoP2.analogRead(buttonThighRightPink) >= valuePressButtonAnalog && valueAnalogButtonP2[buttonThighRightPink] < valuePressButtonAnalog)
+  {
+    valueAnalogButtonP2[buttonThighRightPink] = arduinoP2.analogRead(buttonThighRightPink);
+    currentPinPressP2 = buttonThighRightPink;
+    return buttonThighRightPink;
+  }
+  else if (arduinoP2.analogRead(buttonThighLeftOrange) >= valuePressButtonAnalog && valueAnalogButtonP2[buttonThighLeftOrange] < valuePressButtonAnalog)
+  {
+    valueAnalogButtonP2[buttonThighLeftOrange] = arduinoP2.analogRead(buttonThighLeftOrange);
+    currentPinPressP2 = buttonThighLeftOrange;
+    return buttonThighLeftOrange;
   }
   return -1;
 }
@@ -753,18 +747,18 @@ int getLedPin(int input)
 {
   switch (input)
   {
-     case buttonArmRightPink : 
-       return ledArmRightPink;
-     case buttonArmLeftOrange : 
-       return ledArmLeftOrange;
-     case buttonBoobsBlue : 
-       return ledBoobsBlue;
-     case buttonStomachRed : 
-       return ledStomachRed;
-     case buttonThighRightYellow : 
-       return ledThighRightYellow;
-     case buttonThighLeftGreen : 
-       return ledThighLeftGreen;
+     case buttonArmRightYellow : 
+       return ledArmRightYellow;
+     case buttonArmLeftGreen : 
+       return ledArmLeftGreen;
+     case buttonBoobsRed : 
+       return ledBoobsRed;
+     case buttonStomachBlue : 
+       return ledStomachBlue;
+     case buttonThighRightPink : 
+       return ledThighRightPink;
+     case buttonThighLeftOrange : 
+       return ledThighLeftOrange;
    }
    return -1;
 }
@@ -772,50 +766,50 @@ int getRumblePin(int input)
 {
   switch (input)
   {
-     case buttonArmRightPink : 
-       return rumbleArmRightPink;
-     case buttonArmLeftOrange : 
-       return rumbleArmLeftOrange;
-     case buttonBoobsBlue : 
-       return rumbleBoobsBlue;
-     case buttonStomachRed : 
-       return rumbleStomachRed;
-     case buttonThighRightYellow : 
-       return rumbleThighRightYellow;
-     case buttonThighLeftGreen : 
-       return rumbleThighLeftGreen;
+     case buttonArmRightYellow : 
+       return rumbleArmRightYellow;
+     case buttonArmLeftGreen : 
+       return rumbleArmLeftGreen;
+     case buttonBoobsRed : 
+       return rumbleBoobsRed;
+     case buttonStomachBlue : 
+       return rumbleStomachBlue;
+     case buttonThighRightPink : 
+       return rumbleThighRightPink;
+     case buttonThighLeftOrange : 
+       return rumbleThighLeftOrange;
   }
   return -1;
 }
 
 void stopAllRumble(int player)
 {
-  setPinState(player,rumbleArmRightPink,Arduino.LOW);
-  setPinState(player,rumbleArmLeftOrange,Arduino.LOW);
-  setPinState(player,rumbleBoobsBlue,Arduino.LOW);
-  setPinState(player,rumbleStomachRed,Arduino.LOW);
-  setPinState(player,rumbleThighRightYellow,Arduino.LOW);
-  setPinState(player,rumbleThighLeftGreen,Arduino.LOW);
+  setPinState(player,rumbleArmRightYellow,Arduino.LOW);
+  setPinState(player,rumbleArmLeftGreen,Arduino.LOW);
+  setPinState(player,rumbleBoobsRed,Arduino.LOW);
+  setPinState(player,rumbleStomachBlue,Arduino.LOW);
+  setPinState(player,rumbleThighRightPink,Arduino.LOW);
+  setPinState(player,rumbleThighLeftOrange,Arduino.LOW);
 }
 
 void stopAllLED(int player)
 {
-  setPinState(player,ledArmRightPink,Arduino.LOW);
-  setPinState(player,ledArmLeftOrange,Arduino.LOW);
-  setPinState(player,ledBoobsBlue,Arduino.LOW);
-  setPinState(player,ledStomachRed,Arduino.LOW);
-  setPinState(player,ledThighRightYellow,Arduino.LOW);
-  setPinState(player,ledThighLeftGreen,Arduino.LOW);
+  setPinState(player,ledArmRightYellow,Arduino.LOW);
+  setPinState(player,ledArmLeftGreen,Arduino.LOW);
+  setPinState(player,ledBoobsRed,Arduino.LOW);
+  setPinState(player,ledStomachBlue,Arduino.LOW);
+  setPinState(player,ledThighRightPink,Arduino.LOW);
+  setPinState(player,ledThighLeftOrange,Arduino.LOW);
 }
 
 void fireAllLED(int player)
 {
-  setPinState(player,ledArmRightPink,Arduino.HIGH);
-  setPinState(player,ledArmLeftOrange,Arduino.HIGH);
-  setPinState(player,ledBoobsBlue,Arduino.HIGH);
-  setPinState(player,ledStomachRed,Arduino.HIGH);
-  setPinState(player,ledThighRightYellow,Arduino.HIGH);
-  setPinState(player,ledThighLeftGreen,Arduino.HIGH);
+  setPinState(player,ledArmRightYellow,Arduino.HIGH);
+  setPinState(player,ledArmLeftGreen,Arduino.HIGH);
+  setPinState(player,ledBoobsRed,Arduino.HIGH);
+  setPinState(player,ledStomachBlue,Arduino.HIGH);
+  setPinState(player,ledThighRightPink,Arduino.HIGH);
+  setPinState(player,ledThighLeftOrange,Arduino.HIGH);
 }
 
 int checkKey(int keyPress)
@@ -836,7 +830,7 @@ int checkKey(int keyPress)
   }
   else
   {
-    // Fial the reproduction
+    // Fail the reproduction
     return stateFailPress;
   }
 }
@@ -859,61 +853,56 @@ void buttonReleased()
     default:
     {
         currentPinPressP1 = -1;
-        valueAnalogButtonP1[buttonArmRightPink] = 0;
-        valueAnalogButtonP1[buttonArmLeftOrange] = 0;
-        valueAnalogButtonP1[buttonBoobsBlue] = 0;
-        valueAnalogButtonP1[buttonStomachRed] = 0;
-        valueAnalogButtonP1[buttonThighRightYellow] = 0;
-        valueAnalogButtonP1[buttonThighLeftGreen] = 0;
+        valueAnalogButtonP1[buttonArmRightYellow] = 0;
+        valueAnalogButtonP1[buttonArmLeftGreen] = 0;
+        valueAnalogButtonP1[buttonBoobsRed] = 0;
+        valueAnalogButtonP1[buttonStomachBlue] = 0;
+        valueAnalogButtonP1[buttonThighRightPink] = 0;
+        valueAnalogButtonP1[buttonThighLeftOrange] = 0;
         
         currentPinPressP2 = -1;
-        valueAnalogButtonP2[buttonArmRightPink] = 0;
-        valueAnalogButtonP2[buttonArmLeftOrange] = 0;
-        valueAnalogButtonP2[buttonBoobsBlue] = 0;
-        valueAnalogButtonP2[buttonStomachRed] = 0;
-        valueAnalogButtonP2[buttonThighRightYellow] = 0;
-        valueAnalogButtonP2[buttonThighLeftGreen] = 0;
+        valueAnalogButtonP2[buttonArmRightYellow] = 0;
+        valueAnalogButtonP2[buttonArmLeftGreen] = 0;
+        valueAnalogButtonP2[buttonBoobsRed] = 0;
+        valueAnalogButtonP2[buttonStomachBlue] = 0;
+        valueAnalogButtonP2[buttonThighRightPink] = 0;
+        valueAnalogButtonP2[buttonThighLeftOrange] = 0;
     } break;
   }
 }
 
 boolean checkKeyReleased(int player)
 {
-  if (player == PLAYER1)
+  boolean find = false;
+  if (currentPinPressP1 != -1)
   {
-    if (currentPinPressP1 != -1)
+    if (arduinoP1.analogRead(currentPinPressP1) < valuePressButtonAnalog)
     {
-      if (arduinoP1.analogRead(currentPinPressP1) < valuePressButtonAnalog)
-      {
-        currentPinPressP1 = -1;
-        valueAnalogButtonP1[buttonArmRightPink] = 0;
-        valueAnalogButtonP1[buttonArmLeftOrange] = 0;
-        valueAnalogButtonP1[buttonBoobsBlue] = 0;
-        valueAnalogButtonP1[buttonStomachRed] = 0;
-        valueAnalogButtonP1[buttonThighRightYellow] = 0;
-        valueAnalogButtonP1[buttonThighLeftGreen] = 0;
-        return true;
-      }
+      currentPinPressP1 = -1;
+      valueAnalogButtonP1[buttonArmRightYellow] = 0;
+      valueAnalogButtonP1[buttonArmLeftGreen] = 0;
+      valueAnalogButtonP1[buttonBoobsRed] = 0;
+      valueAnalogButtonP1[buttonStomachBlue] = 0;
+      valueAnalogButtonP1[buttonThighRightPink] = 0;
+      valueAnalogButtonP1[buttonThighLeftOrange] = 0;
+      find = true;
     }
   }
-  else
+  if (currentPinPressP2 != -1)
   {
-    if (currentPinPressP2 != -1)
+    if (arduinoP2.analogRead(currentPinPressP2) < valuePressButtonAnalog)
     {
-      if (arduinoP2.analogRead(currentPinPressP2) < valuePressButtonAnalog)
-      {
-        currentPinPressP2 = -1;
-        valueAnalogButtonP2[buttonArmRightPink] = 0;
-        valueAnalogButtonP2[buttonArmLeftOrange] = 0;
-        valueAnalogButtonP2[buttonBoobsBlue] = 0;
-        valueAnalogButtonP2[buttonStomachRed] = 0;
-        valueAnalogButtonP2[buttonThighRightYellow] = 0;
-        valueAnalogButtonP2[buttonThighLeftGreen] = 0;
-        return true;
-      }
+      currentPinPressP2 = -1;
+      valueAnalogButtonP2[buttonArmRightYellow] = 0;
+      valueAnalogButtonP2[buttonArmLeftGreen] = 0;
+      valueAnalogButtonP2[buttonBoobsRed] = 0;
+      valueAnalogButtonP2[buttonStomachBlue] = 0;
+      valueAnalogButtonP2[buttonThighRightPink] = 0;
+      valueAnalogButtonP2[buttonThighLeftOrange] = 0;
+      find = true;
     }
   }
-  return false;
+  return find;
 }
 
 void setPinState(int player,int pin,int value)
