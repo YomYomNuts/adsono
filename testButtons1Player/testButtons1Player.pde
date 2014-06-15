@@ -113,3 +113,10 @@ boolean checkKeyReleased(int player)
   }
   return find;
 }
+
+void stop()
+{
+  // Stop all
+  stopAllRumble(arduinoP1);
+  stopAllLED(arduinoP1);
+}

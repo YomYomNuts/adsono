@@ -73,14 +73,14 @@ final int ledTempo[] = { 22, 23, 24, 25, 26, 27 };
 // Varibles game
 Arduino arduinoP1;
 Arduino arduinoP2;
-boolean[] valueAnalogP1 = new boolean[6];
-boolean[] valueAnalogP2 = new boolean[6];
+boolean[] valueInputP1 = new boolean[6];
+boolean[] valueInputP2 = new boolean[6];
 int currentPinPressP1 = -1;
 int currentPinPressP2 = -1;
 
 // Game state
 int currentState;
-IntList listInputs;
+IntList listInputs = new IntList();
 boolean canGetInput;
 boolean waitNextTempo;
 int currentInput;
@@ -139,14 +139,13 @@ void setup()
   arduinoP1 = new Arduino(this, Arduino.list()[0]);
   arduinoP2 = new Arduino(this, Arduino.list()[1]);
   
-  // Init analog tab
+  // Init input tab
   currentPinPressP1 = -1;
   currentPinPressP2 = -1;
-  InitInputs(valueAnalogP1, arduinoP1);
-  InitInputs(valueAnalogP2, arduinoP2);
+  InitInputs(valueInputP1, arduinoP1);
+  InitInputs(valueInputP2, arduinoP2);
   
   // Init var game
-  listInputs = new IntList();
   playerStartGame = PLAYER1;
   initGame();
 }
@@ -154,6 +153,8 @@ void setup()
 void initGame()
 {
   Arduino arduinoFirstPlayer = playerStartGame == PLAYER1 ? arduinoP1 : arduinoP2;
+  int otherPlayer = playerStartGame == PLAYER1 ? PLAYER2 : PLAYER1;
+  Arduino arduinoOtherPlayer = otherPlayer == PLAYER1 ? arduinoP1 : arduinoP2;
   
   // Init var game
   currentState = stateReproductP1;
@@ -175,15 +176,15 @@ void initGame()
   }
   delay(timerLEDLowDuringComputerRandom);
   
-  listInputs.append((int)random(numberInputs) + playerStartGame * numberInputs);
-  pinLed = getLedPin(listInputs.get(1) - playerStartGame * numberInputs);
+  listInputs.append((int)random(numberInputs) + otherPlayer * numberInputs);
+  pinLed = getLedPin(listInputs.get(1) - otherPlayer * numberInputs);
   if (pinLed != -1)
   {
-    setPinState(arduinoFirstPlayer,pinLed,Arduino.HIGH);
-    audioInputs.get(listInputs.get(1) - playerStartGame * numberInputs).rewind();
-    audioInputs.get(listInputs.get(1) - playerStartGame * numberInputs).play();
+    setPinState(arduinoOtherPlayer, pinLed, Arduino.HIGH);
+    audioInputs.get(listInputs.get(1) - otherPlayer * numberInputs).rewind();
+    audioInputs.get(listInputs.get(1) - otherPlayer * numberInputs).play();
     delay(timerLEDHighDuringComputerRandom);
-    setPinState(arduinoFirstPlayer, pinLed, Arduino.LOW);
+    setPinState(arduinoOtherPlayer, pinLed, Arduino.LOW);
   }
   delay(timerLEDLowDuringComputerRandom);
     
@@ -215,8 +216,8 @@ void initGame()
 
 void draw()
 {
-  GetInputs(valueAnalogP1, arduinoP1);
-  GetInputs(valueAnalogP2, arduinoP2);
+  GetInputs(valueInputP1, arduinoP1);
+  GetInputs(valueInputP2, arduinoP2);
   buttonReleased();
   buttonPressed();
   
@@ -521,8 +522,8 @@ void buttonPressed()
   int normalizeInput = currentGeneralInputPress >= numberInputs ? currentGeneralInputPress - numberInputs : currentGeneralInputPress;
   if (!canGetInput && !waitNextTempo && currentGeneralInputPress != -1)
   {
-    audioError.rewind();
-    audioError.play();
+    //audioError.rewind();
+    //audioError.play();
   }
   if (canGetInput && currentGeneralInputPress != -1)
   {
@@ -625,7 +626,7 @@ int getGeneralInput(int player)
   // First test
   if (currentPinPressP1 != -1)
   {
-    if (valueAnalogP1[currentPinPressP1])
+    if (valueInputP1[currentPinPressP1])
     {
       println("currentPinPressP1");
       return currentPinPressP1;
@@ -633,7 +634,7 @@ int getGeneralInput(int player)
   }
   if (currentPinPressP2 != -1)
   {
-    if (valueAnalogP2[currentPinPressP2 - numberInputs])
+    if (valueInputP2[currentPinPressP2 - numberInputs])
     {
       println("currentPinPressP2");
       return currentPinPressP2;
@@ -641,64 +642,64 @@ int getGeneralInput(int player)
   }
   
   // Player 1
-  if (valueAnalogP1[buttonArmRightYellow])
+  if (valueInputP1[buttonArmRightYellow])
   {
     currentPinPressP1 = buttonArmRightYellow;
     return currentPinPressP1;
   }
-  else if (valueAnalogP1[buttonArmLeftGreen])
+  else if (valueInputP1[buttonArmLeftGreen])
   {
     currentPinPressP1 = buttonArmLeftGreen;
     return currentPinPressP1;
   }
-  else if (valueAnalogP1[buttonBoobsRed])
+  else if (valueInputP1[buttonBoobsRed])
   {
     currentPinPressP1 = buttonBoobsRed;
     return currentPinPressP1;
   }
-  else if (valueAnalogP1[buttonStomachBlue])
+  else if (valueInputP1[buttonStomachBlue])
   {
     currentPinPressP1 = buttonStomachBlue;
     return currentPinPressP1;
   }
-  else if (valueAnalogP1[buttonThighRightPink])
+  else if (valueInputP1[buttonThighRightPink])
   {
     currentPinPressP1 = buttonThighRightPink;
     return currentPinPressP1;
   }
-  else if (valueAnalogP1[buttonThighLeftOrange])
+  else if (valueInputP1[buttonThighLeftOrange])
   {
     currentPinPressP1 = buttonThighLeftOrange;
     return currentPinPressP1;
   }
   
   // Player 2
-  if (valueAnalogP2[buttonArmRightYellow])
+  if (valueInputP2[buttonArmRightYellow])
   {
     currentPinPressP2 = buttonArmRightYellow + numberInputs;
     return currentPinPressP2;
   }
-  else if (valueAnalogP2[buttonArmLeftGreen])
+  else if (valueInputP2[buttonArmLeftGreen])
   {
     currentPinPressP2 = buttonArmLeftGreen + numberInputs;
     return currentPinPressP2;
   }
-  else if (valueAnalogP2[buttonBoobsRed])
+  else if (valueInputP2[buttonBoobsRed])
   {
     currentPinPressP2 = buttonBoobsRed + numberInputs;
     return currentPinPressP2;
   }
-  else if (valueAnalogP2[buttonStomachBlue])
+  else if (valueInputP2[buttonStomachBlue])
   {
     currentPinPressP2 = buttonStomachBlue + numberInputs;
     return currentPinPressP2;
   }
-  else if (valueAnalogP2[buttonThighRightPink])
+  else if (valueInputP2[buttonThighRightPink])
   {
     currentPinPressP2 = buttonThighRightPink + numberInputs;
     return currentPinPressP2;
   }
-  else if (valueAnalogP2[buttonThighLeftOrange])
+  else if (valueInputP2[buttonThighLeftOrange])
   {
     currentPinPressP2 = buttonThighLeftOrange + numberInputs;
     return currentPinPressP2;
@@ -756,7 +757,7 @@ boolean checkKeyReleased(int player)
 {
   if (currentPinPressP1 != -1)
   {
-    if (valueAnalogP1[currentPinPressP1])
+    if (valueInputP1[currentPinPressP1])
     {
       currentPinPressP1 = -1;
       return true;
@@ -764,7 +765,7 @@ boolean checkKeyReleased(int player)
   }
   if (currentPinPressP2 != -1)
   {
-    if (valueAnalogP2[currentPinPressP2 - numberInputs])
+    if (valueInputP2[currentPinPressP2 - numberInputs])
     {
       currentPinPressP2 = -1;
       return true;
@@ -794,10 +795,26 @@ void setLedTempo(int tempoLevel)
 
 void stop()
 {
+  // Stop all
+  stopAllRumble(arduinoP1);
+  stopAllRumble(arduinoP2);
+  stopAllLED(arduinoP1);
+  stopAllLED(arduinoP2);
+  
+  // Stop all sounds
+  audioBG.close();
+  audioWin.close();
+  audioAreYouReady.close();
+  audioStart.close();
+  audioSpeedUp.close();
+  audioFill.close();
+  audioRecord.close();
+  audioError.close();
+  for (int i = 0; i < numberInputs; ++i)
+    audioInputs.get(i).close();
   for(int i = 0 ; i < audioMetros.size();++i)
-  {
      audioMetros.get(i).close();
-  }
+  
   // the AudioInput you got from Minim.getLineIn()
   minim.stop();
  
