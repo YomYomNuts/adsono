@@ -14,7 +14,7 @@ final int timerNextTurn = 1000; // Timer in millisecond
 final int numberStartTurnDisco = 100; // Number start turns of disco
 final int numberEndTurnDisco = 100; // Number end turns of disco
 final int numberInputChangeByDisco = 5;
-final int timerAfterChangementDisco = 150; // Timer in millisecond
+final int timerAfterChangementDisco = 300; // Timer in millisecond
 
 // Sounds
 final String BGSound = "Music/background.wav";

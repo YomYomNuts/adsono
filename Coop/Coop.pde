@@ -18,6 +18,7 @@ final int maxTurnDiscoToAdd = 100; // Number maximal turns of disco
 final int numberInputChangeByDisco = 5;
 final int timerAfterChangementDisco = 150; // Timer in millisecond
 final int addButtonAllRound = 10;
+final int timerEndOpportinity = 150; // Timer in millisecond
 
 // Sounds
 final String BGSound = "Music/background.wav";
@@ -219,6 +220,13 @@ void draw()
     audioError.rewind();
     audioError.play();
     endGame();
+  }
+  else if (millis() > prevTime + endTimerInput - timerEndOpportinity)
+  {
+    stopAllRumble(arduinoP1);
+    stopAllRumble(arduinoP2);
+    stopAllLED(arduinoP1);
+    stopAllLED(arduinoP2);
   }
   else if (millis() > prevTime + endTimerInput)
   {
