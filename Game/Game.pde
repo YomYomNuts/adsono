@@ -79,8 +79,9 @@ int currentPinPressP1 = -1;
 int currentPinPressP2 = -1;
 
 // Game state
-int currentState;
+int listInputsImpossible[] = {};
 IntList listInputs = new IntList();
+int currentState;
 boolean canGetInput;
 boolean waitNextTempo;
 int currentInput;
@@ -164,7 +165,19 @@ void initGame()
   
   // Add the first input
   listInputs.clear();
-  listInputs.append((int)random(numberInputs) + playerStartGame * numberInputs);
+  int value = -1;
+  boolean find = true;
+  while (find)
+  {
+    find = false;
+    value = (int)random(numberInputs) + playerStartGame * numberInputs;
+    for (int j = 0; j < listInputsImpossible.length; ++j)
+    {
+      if (listInputsImpossible[j] == value)
+        find = true;
+    }
+  }
+  listInputs.append(value);
   int pinLed = getLedPin(listInputs.get(0) - playerStartGame * numberInputs);
   if (pinLed != -1)
   {
@@ -176,7 +189,18 @@ void initGame()
   }
   delay(timerLEDLowDuringComputerRandom);
   
-  listInputs.append((int)random(numberInputs) + otherPlayer * numberInputs);
+  find = true;
+  while (find)
+  {
+    find = false;
+    value = (int)random(numberInputs) + otherPlayer * numberInputs;
+    for (int j = 0; j < listInputsImpossible.length; ++j)
+    {
+      if (listInputsImpossible[j] == value)
+        find = true;
+    }
+  }
+  listInputs.append(value);
   pinLed = getLedPin(listInputs.get(1) - otherPlayer * numberInputs);
   if (pinLed != -1)
   {

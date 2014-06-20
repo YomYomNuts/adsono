@@ -51,6 +51,7 @@ boolean[] currentPinPressP1 = new boolean[numberInputs];
 boolean[] currentPinPressP2 = new boolean[numberInputs];
 
 // Game state
+int listInputsImpossible[] = {};
 IntList listInputs = new IntList();
 int numberRound;
 int endTimerInput;
@@ -147,8 +148,18 @@ void newRound()
   IntList listInputsToAdd = new IntList();
   for (int i = 0; i < numberInputs; ++i)
   {
-    listInputsToAdd.append(i);
-    listInputsToAdd.append(i + numberInputs);
+    boolean find1 = false, find2 = false;
+    for (int j = 0; j < listInputsImpossible.length; ++j)
+    {
+      if (listInputsImpossible[j] == i)
+        find1 = true;
+      if (listInputsImpossible[j] == i + numberInputs)
+        find2 = true;
+    }
+    if (!find1)
+      listInputsToAdd.append(i);
+    if (!find2)
+      listInputsToAdd.append(i + numberInputs);
   }
   int i = 0;
   listInputs.clear();
