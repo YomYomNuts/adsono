@@ -163,10 +163,10 @@ void newRound()
     listInputsToAdd.remove(index);
     i++;
   }
-  println("listInputsP1 " + listInputsP1);
+  println("listInputs " + listInputsP1);
 }
 
-void endGame(Arduino winner)
+void endGame(Arduino winner, Arduino loser)
 {
   // Stop all
   stopAllRumble(arduinoP1);
@@ -180,15 +180,18 @@ void endGame(Arduino winner)
   delay(timerWinSound);
   
   // Funk
+  println("time 1 " + millis());
   for (int i = 0; i < numberEndTurnDisco; ++i)
   {
     for (int j = 0; j < numberInputChangeByDisco; ++j)
     {
       setPinState(winner, getLedPin((int)random(numberInputs)), (int)random(2));
+      setPinState(loser, getLedPin((int)random(numberInputs)), Arduino.LOW);
     }
     if (i == numberEndTurnDisco - 1)
-      delay(timerAfterChangementDisco);
+      delay(timerAfterChangementDisco); 
   }
+  println("time 2 " + millis());
   stopAllRumble(winner);
   stopAllLED(winner);
   
@@ -208,24 +211,24 @@ void draw()
     println("End round! P1 lose!");
     audioError.rewind();
     audioError.play();
-    endGame(arduinoP2);
+    endGame(arduinoP2, arduinoP1);
   }
   else if (badInputP2)
   {
     println("End round! P2 lose!");
     audioError.rewind();
     audioError.play();
-    endGame(arduinoP1);
+    endGame(arduinoP1, arduinoP2);
   }
   else if (listInputsP1.size() == 0)
   {
     println("End round! P1 win!");
-    endGame(arduinoP1);
+    endGame(arduinoP1, arduinoP2);
   }
   else if (listInputsP2.size() == 0)
   {
     println("End round! P2 win!");
-    endGame(arduinoP2);
+    endGame(arduinoP2, arduinoP1);
   }
 }
 

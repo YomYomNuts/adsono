@@ -233,20 +233,10 @@ void draw()
     case stateChangePlayerP1toP2:
     {
       println("Wait next player");
-      delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(arduinoP2, rumbleThighRightPink, Arduino.HIGH);
-      setPinState(arduinoP2, rumbleThighLeftOrange, Arduino.HIGH);
-      delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(arduinoP2, rumbleBoobsRed, Arduino.HIGH);
-      setPinState(arduinoP2, rumbleStomachBlue, Arduino.HIGH);
-      
-      delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(arduinoP2, rumbleArmRightYellow, Arduino.HIGH);
-      setPinState(arduinoP2, rumbleArmLeftGreen, Arduino.HIGH);
-      delay(timerLaunchRumbleDuringChangementPlayer);
+      stopAllRumble(arduinoP1);
+      stopAllLED(arduinoP1);
       stopAllRumble(arduinoP2);
       stopAllLED(arduinoP2);
-      delay(timerLaunchRumbleDuringChangementPlayer);
       
       audioFill.rewind();
       audioFill.play();
@@ -276,19 +266,10 @@ void draw()
     case stateChangePlayerP2toP1:
     {
       println("Wait next player");
-      delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(arduinoP1, rumbleThighRightPink, Arduino.HIGH);
-      setPinState(arduinoP1, rumbleThighLeftOrange, Arduino.HIGH);
-      delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(arduinoP1, rumbleBoobsRed, Arduino.HIGH);
-      setPinState(arduinoP1, rumbleStomachBlue, Arduino.HIGH);
-      
-      delay(timerLaunchRumbleDuringChangementPlayer);
-      setPinState(arduinoP1, rumbleArmRightYellow, Arduino.HIGH);
-      setPinState(arduinoP1, rumbleArmLeftGreen, Arduino.HIGH);
       stopAllRumble(arduinoP1);
       stopAllLED(arduinoP1);
-      delay(timerLaunchRumbleDuringChangementPlayer);
+      stopAllRumble(arduinoP2);
+      stopAllLED(arduinoP2);
       
       audioFill.rewind();
       audioFill.play();
