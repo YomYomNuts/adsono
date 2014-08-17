@@ -142,7 +142,7 @@ void initGame()
 void newRound()
 {
   // Init var game
-  int numberInputsToGenerate = (int)random(numberInputs);
+  int numberInputsToGenerate = (int)random(numberInputs - listInputsImpossible.length);
   IntList listInputsToAdd = new IntList();
   for (int i = 0; i < numberInputs; ++i)
   {
@@ -160,7 +160,7 @@ void newRound()
   listInputsP2.clear();
   while (i <= numberInputsToGenerate)
   {
-    int index = (int)random(listInputsToAdd.size() - 1);
+    int index = (int)random(listInputsToAdd.size());
     int indexButton = listInputsToAdd.get(index);
     setPinState(arduinoP2, getLedPin(indexButton), Arduino.HIGH);
     setPinState(arduinoP2, getRumblePin(indexButton), Arduino.HIGH);
@@ -188,7 +188,6 @@ void endGame(Arduino winner, Arduino loser)
   delay(timerWinSound);
   
   // Funk
-  println("time 1 " + millis());
   for (int i = 0; i < numberEndTurnDisco; ++i)
   {
     for (int j = 0; j < numberInputChangeByDisco; ++j)
@@ -199,7 +198,6 @@ void endGame(Arduino winner, Arduino loser)
     if (i == numberEndTurnDisco - 1)
       delay(timerAfterChangementDisco); 
   }
-  println("time 2 " + millis());
   stopAllRumble(winner);
   stopAllLED(winner);
   

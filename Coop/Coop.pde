@@ -10,7 +10,7 @@ import ddf.minim.effects.*;
 
 // GD can change this values
 final int timerStart = 1000; // Timer in millisecond
-final int timerByInput = 1000; // Timer in millisecond
+final int timerByInput = 1500; // Timer in millisecond
 final int timerNextTurn = 1000; // Timer in millisecond
 final int numberStartTurnDisco = 100; // Number start turns of disco
 final int numberTurnDisco = 10; // Number minimal turns of disco
@@ -142,8 +142,8 @@ void newRound()
 {
   // Init var game
   int numberInputsToGenerate = 1 + numberRound / addButtonAllRound;
-  if (numberInputsToGenerate > numberInputs)
-    numberInputsToGenerate = numberInputs;
+  if (numberInputsToGenerate > numberInputs * 2 - listInputsImpossible.length)
+    numberInputsToGenerate = numberInputs * 2 - listInputsImpossible.length;
   endTimerInput = timerStart + timerByInput * numberInputsToGenerate;
   IntList listInputsToAdd = new IntList();
   for (int i = 0; i < numberInputs; ++i)
@@ -165,7 +165,7 @@ void newRound()
   listInputs.clear();
   while (i < numberInputsToGenerate)
   {
-    int index = (int)random(listInputsToAdd.size() - 1);
+    int index = (int)random(listInputsToAdd.size());
     int indexButton = listInputsToAdd.get(index);
     if (indexButton >= numberInputs)
     {
@@ -220,8 +220,17 @@ void draw()
   buttonState();
   
   // End round
+  if (millis() > prevTime + endTimerInput - timerEndOpportinity)
+  {
+    println("Stop all!");
+    stopAllRumble(arduinoP1);
+    stopAllRumble(arduinoP2);
+    stopAllLED(arduinoP1);
+    stopAllLED(arduinoP2);
+  }
   if (listInputs.size() == 0 && !badInput)
   {
+    println("Next round!");
     ++numberRound;
     newRound();
   }
@@ -231,13 +240,6 @@ void draw()
     audioError.rewind();
     audioError.play();
     endGame();
-  }
-  else if (millis() > prevTime + endTimerInput - timerEndOpportinity)
-  {
-    stopAllRumble(arduinoP1);
-    stopAllRumble(arduinoP2);
-    stopAllLED(arduinoP1);
-    stopAllLED(arduinoP2);
   }
   else if (millis() > prevTime + endTimerInput)
   {
