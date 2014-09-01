@@ -22,12 +22,11 @@ final int numberBlinkVictory = 3;
 
 // Sounds
 final String BGSound = "Music/background.wav";
-final String buttonArmRightYellowSound = "Music/inputs/Fx_input (1).wav";
-final String buttonArmLeftGreenSound = "Music/inputs/Fx_input (2).wav";
-final String buttonBoobsRedSound = "Music/inputs/Fx_input (3).wav";
-final String buttonStomachBlueSound = "Music/inputs/Fx_input (4).wav";
-final String buttonThighRightPinkSound = "Music/inputs/Fx_input (5).wav";
-final String buttonThighLeftOrangeSound = "Music/inputs/Fx_input (6).wav";
+final String buttonYellowSound = "Music/inputs/Fx_input (1).wav";
+final String buttonGreenSound = "Music/inputs/Fx_input (2).wav";
+final String buttonRedSound = "Music/inputs/Fx_input (3).wav";
+final String buttonBlueSound = "Music/inputs/Fx_input (4).wav";
+final String buttonWhiteSound = "Music/inputs/Fx_input (5).wav";
 final String metronomeJ1Sound = "Music/metroJ1.wav";
 final String metronomeJ2Sound = "Music/metroJ2.wav";
 final String introSound = "Music/voices/impro.wav";
@@ -55,7 +54,7 @@ final int stateFailReproductP1 = 6;
 final int stateFailReproductP2 = 7;
 
 // Inputs
-final int numberInputs = 6;
+final int numberInputs = 5;
 final int blankInput = numberInputs * 2;
 
 // State input press
@@ -73,8 +72,8 @@ final int ledTempo[] = { 22, 23, 24, 25, 26, 27 };
 // Varibles game
 Arduino arduinoP1;
 Arduino arduinoP2;
-boolean[] valueInputP1 = new boolean[6];
-boolean[] valueInputP2 = new boolean[6];
+boolean[] valueInputP1 = new boolean[numberInputs];
+boolean[] valueInputP2 = new boolean[numberInputs];
 int currentPinPressP1 = -1;
 int currentPinPressP2 = -1;
 
@@ -116,12 +115,11 @@ void setup()
   audioBG.loop();
   
   audioInputs = new ArrayList<AudioPlayer>();
-  audioInputs.add(minim.loadFile(buttonArmRightYellowSound));
-  audioInputs.add(minim.loadFile(buttonArmLeftGreenSound));
-  audioInputs.add(minim.loadFile(buttonBoobsRedSound));
-  audioInputs.add(minim.loadFile(buttonStomachBlueSound));
-  audioInputs.add(minim.loadFile(buttonThighRightPinkSound));
-  audioInputs.add(minim.loadFile(buttonThighLeftOrangeSound));
+  audioInputs.add(minim.loadFile(buttonYellowSound));
+  audioInputs.add(minim.loadFile(buttonGreenSound));
+  audioInputs.add(minim.loadFile(buttonRedSound));
+  audioInputs.add(minim.loadFile(buttonBlueSound));
+  audioInputs.add(minim.loadFile(buttonWhiteSound));
   
   audioMetros = new ArrayList<AudioPlayer>();
   audioMetros.add(minim.loadFile(metronomeJ1Sound));
@@ -647,66 +645,56 @@ int getGeneralInput(int player)
   }
   
   // Player 1
-  if (valueInputP1[buttonArmRightYellow])
+  if (valueInputP1[buttonYellow])
   {
-    currentPinPressP1 = buttonArmRightYellow;
+    currentPinPressP1 = buttonYellow;
     return currentPinPressP1;
   }
-  else if (valueInputP1[buttonArmLeftGreen])
+  else if (valueInputP1[buttonGreen])
   {
-    currentPinPressP1 = buttonArmLeftGreen;
+    currentPinPressP1 = buttonGreen;
     return currentPinPressP1;
   }
-  else if (valueInputP1[buttonBoobsRed])
+  else if (valueInputP1[buttonRed])
   {
-    currentPinPressP1 = buttonBoobsRed;
+    currentPinPressP1 = buttonRed;
     return currentPinPressP1;
   }
-  else if (valueInputP1[buttonStomachBlue])
+  else if (valueInputP1[buttonBlue])
   {
-    currentPinPressP1 = buttonStomachBlue;
+    currentPinPressP1 = buttonBlue;
     return currentPinPressP1;
   }
-  else if (valueInputP1[buttonThighRightPink])
+  else if (valueInputP1[buttonWhite])
   {
-    currentPinPressP1 = buttonThighRightPink;
-    return currentPinPressP1;
-  }
-  else if (valueInputP1[buttonThighLeftOrange])
-  {
-    currentPinPressP1 = buttonThighLeftOrange;
+    currentPinPressP1 = buttonWhite;
     return currentPinPressP1;
   }
   
   // Player 2
-  if (valueInputP2[buttonArmRightYellow])
+  if (valueInputP2[buttonYellow])
   {
-    currentPinPressP2 = buttonArmRightYellow + numberInputs;
+    currentPinPressP2 = buttonYellow + numberInputs;
     return currentPinPressP2;
   }
-  else if (valueInputP2[buttonArmLeftGreen])
+  else if (valueInputP2[buttonGreen])
   {
-    currentPinPressP2 = buttonArmLeftGreen + numberInputs;
+    currentPinPressP2 = buttonGreen + numberInputs;
     return currentPinPressP2;
   }
-  else if (valueInputP2[buttonBoobsRed])
+  else if (valueInputP2[buttonRed])
   {
-    currentPinPressP2 = buttonBoobsRed + numberInputs;
+    currentPinPressP2 = buttonRed + numberInputs;
     return currentPinPressP2;
   }
-  else if (valueInputP2[buttonStomachBlue])
+  else if (valueInputP2[buttonBlue])
   {
-    currentPinPressP2 = buttonStomachBlue + numberInputs;
+    currentPinPressP2 = buttonBlue + numberInputs;
     return currentPinPressP2;
   }
-  else if (valueInputP2[buttonThighRightPink])
+  else if (valueInputP2[buttonWhite])
   {
-    currentPinPressP2 = buttonThighRightPink + numberInputs;
-    return currentPinPressP2;
-  }
-  else if (valueInputP2[buttonThighLeftOrange])
-  {
-    currentPinPressP2 = buttonThighLeftOrange + numberInputs;
+    currentPinPressP2 = buttonWhite + numberInputs;
     return currentPinPressP2;
   }
   return -1;

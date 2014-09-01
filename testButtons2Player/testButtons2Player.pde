@@ -1,7 +1,7 @@
 import processing.serial.*;
 import cc.arduino.*;
 
-final int numberInputs = 6;
+final int numberInputs = 5;
 boolean[] valueInputP1 = new boolean[numberInputs];
 int currentPinPressP1 = -1;
 boolean[] valueInputP2 = new boolean[numberInputs];
@@ -50,53 +50,45 @@ int getGeneralInput(int player)
       if (valueInputP1[currentPinPressP1])
         return -1;
     }
-    if (valueInputP1[buttonArmRightYellow])
+    if (valueInputP1[buttonYellow])
     {
-      println("Press buttonArmRightYellow 1");
-      setPinState(arduinoP1, rumbleArmRightYellow, Arduino.HIGH);
-      setPinState(arduinoP1, ledArmRightYellow, Arduino.HIGH);
-      currentPinPressP1 = buttonArmRightYellow;
-      return buttonArmRightYellow;
+      println("Press buttonYellow 1");
+      setPinState(arduinoP1, rumbleYellow, Arduino.HIGH);
+      setPinState(arduinoP1, ledYellow, Arduino.HIGH);
+      currentPinPressP1 = buttonYellow;
+      return buttonYellow;
     }
-    else if (valueInputP1[buttonArmLeftGreen])
+    else if (valueInputP1[buttonGreen])
     {
-      println("Press buttonArmLeftGreen 1");
-      setPinState(arduinoP1, rumbleArmLeftGreen, Arduino.HIGH);
-      setPinState(arduinoP1, ledArmLeftGreen, Arduino.HIGH);
-      currentPinPressP1 = buttonArmLeftGreen;
-      return buttonArmLeftGreen;
+      println("Press buttonGreen 1");
+      setPinState(arduinoP1, rumbleGreen, Arduino.HIGH);
+      setPinState(arduinoP1, ledGreen, Arduino.HIGH);
+      currentPinPressP1 = buttonGreen;
+      return buttonGreen;
     }
-    else if (valueInputP1[buttonBoobsRed])
+    else if (valueInputP1[buttonRed])
     {
-      println("Press buttonBoobsRed 1");
-      setPinState(arduinoP1, rumbleBoobsRed, Arduino.HIGH);
-      setPinState(arduinoP1, ledBoobsRed, Arduino.HIGH);
-      currentPinPressP1 = buttonBoobsRed;
-      return buttonBoobsRed;
+      println("Press buttonRed 1");
+      setPinState(arduinoP1, rumbleRed, Arduino.HIGH);
+      setPinState(arduinoP1, ledRed, Arduino.HIGH);
+      currentPinPressP1 = buttonRed;
+      return buttonRed;
     }
-    else if (valueInputP1[buttonStomachBlue])
+    else if (valueInputP1[buttonBlue])
     {
-      println("Press buttonStomachBlue 1");
-      setPinState(arduinoP1, rumbleStomachBlue, Arduino.HIGH);
-      setPinState(arduinoP1, ledStomachBlue, Arduino.HIGH);
-      currentPinPressP1 = buttonStomachBlue;
-      return buttonStomachBlue;
+      println("Press buttonBlue 1");
+      setPinState(arduinoP1, rumbleBlue, Arduino.HIGH);
+      setPinState(arduinoP1, ledBlue, Arduino.HIGH);
+      currentPinPressP1 = buttonBlue;
+      return buttonBlue;
     }
-    else if (valueInputP1[buttonThighRightPink])
+    else if (valueInputP1[buttonWhite])
     {
-      println("Press buttonThighRightPink 1");
-      setPinState(arduinoP1, rumbleThighRightPink, Arduino.HIGH);
-      setPinState(arduinoP1, ledThighRightPink, Arduino.HIGH);
-      currentPinPressP1 = buttonThighRightPink;
-      return buttonThighRightPink;
-    }
-    else if (valueInputP1[buttonThighLeftOrange])
-    {
-      println("Press buttonThighLeftOrange 1");
-      setPinState(arduinoP1, rumbleThighLeftOrange, Arduino.HIGH);
-      setPinState(arduinoP1, ledThighLeftOrange, Arduino.HIGH);
-      currentPinPressP1 = buttonThighLeftOrange;
-      return buttonThighLeftOrange;
+      println("Press buttonWhite 1");
+      setPinState(arduinoP1, rumbleWhite, Arduino.HIGH);
+      setPinState(arduinoP1, ledWhite, Arduino.HIGH);
+      currentPinPressP1 = buttonWhite;
+      return buttonWhite;
     }
   }
   else
@@ -106,53 +98,45 @@ int getGeneralInput(int player)
       if (valueInputP2[currentPinPressP2])
         return -1;
     }
-    if (valueInputP2[buttonArmRightYellow])
+    if (valueInputP2[buttonYellow])
     {
-      println("Press buttonArmRightYellow 2");
-      setPinState(arduinoP2, rumbleArmRightYellow, Arduino.HIGH);
-      setPinState(arduinoP2, ledArmRightYellow, Arduino.HIGH);
-      currentPinPressP2 = buttonArmRightYellow;
-      return buttonArmRightYellow;
+      println("Press buttonYellow 2");
+      setPinState(arduinoP2, rumbleYellow, Arduino.HIGH);
+      setPinState(arduinoP2, ledYellow, Arduino.HIGH);
+      currentPinPressP2 = buttonYellow;
+      return buttonYellow;
     }
-    else if (valueInputP2[buttonArmLeftGreen])
+    else if (valueInputP2[buttonGreen])
     {
-      println("Press buttonArmLeftGreen 2");
-      setPinState(arduinoP2, rumbleArmLeftGreen, Arduino.HIGH);
-      setPinState(arduinoP2, ledArmLeftGreen, Arduino.HIGH);
-      currentPinPressP2 = buttonArmLeftGreen;
-      return buttonArmLeftGreen;
+      println("Press buttonGreen 2");
+      setPinState(arduinoP2, rumbleGreen, Arduino.HIGH);
+      setPinState(arduinoP2, ledGreen, Arduino.HIGH);
+      currentPinPressP2 = buttonGreen;
+      return buttonGreen;
     }
-    else if (valueInputP2[buttonBoobsRed])
+    else if (valueInputP2[buttonRed])
     {
-      println("Press buttonBoobsRed 2");
-      setPinState(arduinoP2, rumbleBoobsRed, Arduino.HIGH);
-      setPinState(arduinoP2, ledBoobsRed, Arduino.HIGH);
-      currentPinPressP2 = buttonBoobsRed;
-      return buttonBoobsRed;
+      println("Press buttonRed 2");
+      setPinState(arduinoP2, rumbleRed, Arduino.HIGH);
+      setPinState(arduinoP2, ledRed, Arduino.HIGH);
+      currentPinPressP2 = buttonRed;
+      return buttonRed;
     }
-    else if (valueInputP2[buttonStomachBlue])
+    else if (valueInputP2[buttonBlue])
     {
-      println("Press buttonStomachBlue 2");
-      setPinState(arduinoP2, rumbleStomachBlue, Arduino.HIGH);
-      setPinState(arduinoP2, ledStomachBlue, Arduino.HIGH);
-      currentPinPressP2 = buttonStomachBlue;
-      return buttonStomachBlue;
+      println("Press buttonBlue 2");
+      setPinState(arduinoP2, rumbleBlue, Arduino.HIGH);
+      setPinState(arduinoP2, ledBlue, Arduino.HIGH);
+      currentPinPressP2 = buttonBlue;
+      return buttonBlue;
     }
-    else if (valueInputP2[buttonThighRightPink])
+    else if (valueInputP2[buttonWhite])
     {
-      println("Press buttonThighRightPink 2");
-      setPinState(arduinoP2, rumbleThighRightPink, Arduino.HIGH);
-      setPinState(arduinoP2, ledThighRightPink, Arduino.HIGH);
-      currentPinPressP2 = buttonThighRightPink;
-      return buttonThighRightPink;
-    }
-    else if (valueInputP2[buttonThighLeftOrange])
-    {
-      println("Press buttonThighLeftOrange 2");
-      setPinState(arduinoP2, rumbleThighLeftOrange, Arduino.HIGH);
-      setPinState(arduinoP2, ledThighLeftOrange, Arduino.HIGH);
-      currentPinPressP2 = buttonThighLeftOrange;
-      return buttonThighLeftOrange;
+      println("Press buttonWhite 2");
+      setPinState(arduinoP2, rumbleWhite, Arduino.HIGH);
+      setPinState(arduinoP2, ledWhite, Arduino.HIGH);
+      currentPinPressP2 = buttonWhite;
+      return buttonWhite;
     }
   }
   return -1;

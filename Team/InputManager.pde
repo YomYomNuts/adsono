@@ -1,37 +1,37 @@
 // Pin buttons
-final int pinbuttonArmRightYellow = 2;
-final int pinbuttonArmLeftGreen = 3;
-final int pinbuttonBoobsRed = 4;
-final int pinbuttonStomachBlue = 5;
-final int pinbuttonThighRightPink = 6;
-final int pinbuttonThighLeftOrange = 7;
+final int pinbuttonYellow = 2;
+final int pinbuttonGreen = 3;
+final int pinbuttonRed = 4;
+final int pinbuttonBlue = 5;
+final int pinbuttonWhite = 6;
 
 // Position buttons
-final int buttonArmRightYellow = 0;
-final int buttonArmLeftGreen = 1;
-final int buttonBoobsRed = 2;
-final int buttonStomachBlue = 3;
-final int buttonThighRightPink = 4;
-final int buttonThighLeftOrange = 5;
+final int buttonYellow = 0;
+final int buttonGreen = 1;
+final int buttonRed = 2;
+final int buttonBlue = 3;
+final int buttonWhite = 4;
 
 void InitInputs(boolean pinValues[], Arduino arduino)
 {
-  int index = pinbuttonArmRightYellow;
-  for (int i = 0; i < 6; ++i)
-  {
-    arduino.pinMode(index, Arduino.INPUT);
-    pinValues[i] = false;
-    index++;
-  }
+  arduino.pinMode(pinbuttonYellow, Arduino.INPUT);
+  pinValues[buttonYellow] = false;
+  arduino.pinMode(pinbuttonGreen, Arduino.INPUT);
+  pinValues[buttonGreen] = false;
+  arduino.pinMode(pinbuttonRed, Arduino.INPUT);
+  pinValues[buttonRed] = false;
+  arduino.pinMode(pinbuttonBlue, Arduino.INPUT);
+  pinValues[buttonBlue] = false;
+  arduino.pinMode(pinbuttonWhite, Arduino.INPUT);
+  pinValues[buttonWhite] = false;
 }
 
 void GetInputs(boolean pinValues[], Arduino arduino)
 {
   int valueButton = Arduino.LOW;
-  int index = pinbuttonArmRightYellow;
-  for (int i = 0; i < 6; ++i)
-  {
-    pinValues[i] = (arduino.digitalRead(index) == valueButton) ? true : false;
-    index++;
-  }
+  pinValues[buttonYellow] = (arduino.digitalRead(pinbuttonYellow) == valueButton) ? true : false;
+  pinValues[buttonGreen] = (arduino.digitalRead(pinbuttonGreen) == valueButton) ? true : false;
+  pinValues[buttonRed] = (arduino.digitalRead(pinbuttonRed) == valueButton) ? true : false;
+  pinValues[buttonBlue] = (arduino.digitalRead(pinbuttonBlue) == valueButton) ? true : false;
+  pinValues[buttonWhite] = (arduino.digitalRead(pinbuttonWhite) == valueButton) ? true : false;
 }  

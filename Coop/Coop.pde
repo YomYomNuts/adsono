@@ -22,12 +22,11 @@ final int timerEndOpportinity = 150; // Timer in millisecond
 
 // Sounds
 final String BGSound = "Music/background.wav";
-final String buttonArmRightYellowSound = "Music/inputs/Fx_input (1).wav";
-final String buttonArmLeftGreenSound = "Music/inputs/Fx_input (2).wav";
-final String buttonBoobsRedSound = "Music/inputs/Fx_input (3).wav";
-final String buttonStomachBlueSound = "Music/inputs/Fx_input (4).wav";
-final String buttonThighRightPinkSound = "Music/inputs/Fx_input (5).wav";
-final String buttonThighLeftOrangeSound = "Music/inputs/Fx_input (6).wav";
+final String buttonYellowSound = "Music/inputs/Fx_input (1).wav";
+final String buttonGreenSound = "Music/inputs/Fx_input (2).wav";
+final String buttonRedSound = "Music/inputs/Fx_input (3).wav";
+final String buttonBlueSound = "Music/inputs/Fx_input (4).wav";
+final String buttonWhiteSound = "Music/inputs/Fx_input (5).wav";
 final String areYouReadySound = "Music/voices/ready.wav";
 final int timerAreYouReadySound = 1500; // Timer in millisecond
 final String startSound = "Music/voices/start.wav";
@@ -35,7 +34,7 @@ final int timerStartSound = 1130; // Timer in millisecond
 final String errorSound = "Music/error.wav";
 
 // Inputs
-final int numberInputs = 6;
+final int numberInputs = 5;
 final int blankInput = numberInputs * 2;
 
 // arduino id
@@ -75,12 +74,11 @@ void setup()
   audioBG.loop();
   
   audioInputs = new ArrayList<AudioPlayer>();
-  audioInputs.add(minim.loadFile(buttonArmRightYellowSound));
-  audioInputs.add(minim.loadFile(buttonArmLeftGreenSound));
-  audioInputs.add(minim.loadFile(buttonBoobsRedSound));
-  audioInputs.add(minim.loadFile(buttonStomachBlueSound));
-  audioInputs.add(minim.loadFile(buttonThighRightPinkSound));
-  audioInputs.add(minim.loadFile(buttonThighLeftOrangeSound));
+  audioInputs.add(minim.loadFile(buttonYellowSound));
+  audioInputs.add(minim.loadFile(buttonGreenSound));
+  audioInputs.add(minim.loadFile(buttonRedSound));
+  audioInputs.add(minim.loadFile(buttonBlueSound));
+  audioInputs.add(minim.loadFile(buttonWhiteSound));
   
   audioAreYouReady = minim.loadFile(areYouReadySound);
   audioStart = minim.loadFile(startSound);

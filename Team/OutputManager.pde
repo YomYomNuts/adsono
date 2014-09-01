@@ -1,65 +1,58 @@
 // Rumble pin
-final int rumbleArmRightYellow = 49;
-final int rumbleArmLeftGreen = 48;
-final int rumbleBoobsRed = 47;
-final int rumbleStomachBlue = 46;
-final int rumbleThighRightPink = 45;
-final int rumbleThighLeftOrange = 44;
+final int rumbleYellow = 49;
+final int rumbleGreen = 48;
+final int rumbleRed = 47;
+final int rumbleBlue = 46;
+final int rumbleWhite = 45;
 
 // Led pin
-final int ledArmRightYellow = 19;
-final int ledArmLeftGreen = 18;
-final int ledBoobsRed = 17;
-final int ledStomachBlue = 16;
-final int ledThighRightPink = 15;
-final int ledThighLeftOrange = 14;
+final int ledYellow = 19;
+final int ledGreen = 18;
+final int ledRed = 17;
+final int ledBlue = 16;
+final int ledWhite = 15;
 
 void stopAllRumble(Arduino arduino)
 {
-  setPinState(arduino, rumbleArmRightYellow, Arduino.LOW);
-  setPinState(arduino, rumbleArmLeftGreen, Arduino.LOW);
-  setPinState(arduino, rumbleBoobsRed, Arduino.LOW);
-  setPinState(arduino, rumbleStomachBlue, Arduino.LOW);
-  setPinState(arduino, rumbleThighRightPink, Arduino.LOW);
-  setPinState(arduino, rumbleThighLeftOrange, Arduino.LOW);
+  setPinState(arduino, rumbleYellow, Arduino.LOW);
+  setPinState(arduino, rumbleGreen, Arduino.LOW);
+  setPinState(arduino, rumbleRed, Arduino.LOW);
+  setPinState(arduino, rumbleBlue, Arduino.LOW);
+  setPinState(arduino, rumbleWhite, Arduino.LOW);
 }
 
 void stopAllLED(Arduino arduino)
 {
-  setPinState(arduino, ledArmRightYellow, Arduino.LOW);
-  setPinState(arduino, ledArmLeftGreen, Arduino.LOW);
-  setPinState(arduino, ledBoobsRed, Arduino.LOW);
-  setPinState(arduino, ledStomachBlue, Arduino.LOW);
-  setPinState(arduino, ledThighRightPink, Arduino.LOW);
-  setPinState(arduino, ledThighLeftOrange, Arduino.LOW);
+  setPinState(arduino, ledYellow, Arduino.LOW);
+  setPinState(arduino, ledGreen, Arduino.LOW);
+  setPinState(arduino, ledRed, Arduino.LOW);
+  setPinState(arduino, ledBlue, Arduino.LOW);
+  setPinState(arduino, ledWhite, Arduino.LOW);
 }
 
 void fireAllLED(Arduino arduino)
 {
-  setPinState(arduino, ledArmRightYellow, Arduino.HIGH);
-  setPinState(arduino, ledArmLeftGreen, Arduino.HIGH);
-  setPinState(arduino, ledBoobsRed, Arduino.HIGH);
-  setPinState(arduino, ledStomachBlue, Arduino.HIGH);
-  setPinState(arduino, ledThighRightPink, Arduino.HIGH);
-  setPinState(arduino, ledThighLeftOrange, Arduino.HIGH);
+  setPinState(arduino, ledYellow, Arduino.HIGH);
+  setPinState(arduino, ledGreen, Arduino.HIGH);
+  setPinState(arduino, ledRed, Arduino.HIGH);
+  setPinState(arduino, ledBlue, Arduino.HIGH);
+  setPinState(arduino, ledWhite, Arduino.HIGH);
 }
 
 int getLedPin(int input)
 {
   switch (input)
   {
-     case buttonArmRightYellow : 
-       return ledArmRightYellow;
-     case buttonArmLeftGreen : 
-       return ledArmLeftGreen;
-     case buttonBoobsRed : 
-       return ledBoobsRed;
-     case buttonStomachBlue : 
-       return ledStomachBlue;
-     case buttonThighRightPink : 
-       return ledThighRightPink;
-     case buttonThighLeftOrange : 
-       return ledThighLeftOrange;
+     case buttonYellow : 
+       return ledYellow;
+     case buttonGreen : 
+       return ledGreen;
+     case buttonRed : 
+       return ledRed;
+     case buttonBlue : 
+       return ledBlue;
+     case buttonWhite : 
+       return ledWhite;
    }
    return -1;
 }
@@ -68,18 +61,16 @@ int getRumblePin(int input)
 {
   switch (input)
   {
-     case buttonArmRightYellow : 
-       return rumbleArmRightYellow;
-     case buttonArmLeftGreen : 
-       return rumbleArmLeftGreen;
-     case buttonBoobsRed : 
-       return rumbleBoobsRed;
-     case buttonStomachBlue : 
-       return rumbleStomachBlue;
-     case buttonThighRightPink : 
-       return rumbleThighRightPink;
-     case buttonThighLeftOrange : 
-       return rumbleThighLeftOrange;
+     case buttonYellow : 
+       return rumbleYellow;
+     case buttonGreen : 
+       return rumbleGreen;
+     case buttonRed : 
+       return rumbleRed;
+     case buttonBlue : 
+       return rumbleBlue;
+     case buttonWhite : 
+       return rumbleWhite;
   }
   return -1;
 }
