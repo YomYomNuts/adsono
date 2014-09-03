@@ -19,9 +19,9 @@ final int numberInputChangeByDisco = 5;
 final int timerAfterChangementDisco = 150; // Timer in millisecond
 final int addButtonAllRound = 10;
 final int timerEndOpportinity = 150; // Timer in millisecond
-final int numberMinimalInputs = 2;
-final int numberMaximalInputs = 9;
 final int timerBlinkBeforeTheEnd = 1000; // Timer in millisecond
+final int stepTwister[] = { 3, 3, 3, 3, 4, 4, 4, 5 }; // Number button by player
+final int timerPlayBip = 1000; // Timer in millisecond
 
 // Sounds
 final String BGSound = "Music/background.wav";
@@ -35,6 +35,7 @@ final int timerAreYouReadySound = 1500; // Timer in millisecond
 final String startSound = "Music/voices/start.wav";
 final int timerStartSound = 1130; // Timer in millisecond
 final String errorSound = "Music/error.wav";
+final String bipSound = "Music/bip.wav";
 
 // Inputs
 final int numberInputs = 5;
@@ -59,6 +60,8 @@ int endTimerInput;
 int prevTime;
 int timerBlink;
 int stateBlink;
+int currentIndexStepTwister = -1;
+int previousTimerBip;
 
 // Music
 Minim minim;
@@ -67,6 +70,7 @@ ArrayList<AudioPlayer> audioInputs;
 AudioPlayer audioAreYouReady;
 AudioPlayer audioStart;
 AudioPlayer audioError;
+AudioPlayer audioBip;
 
 void setup()
 {
@@ -86,6 +90,7 @@ void setup()
   audioAreYouReady = minim.loadFile(areYouReadySound);
   audioStart = minim.loadFile(startSound);
   audioError = minim.loadFile(errorSound);
+  audioBip = minim.loadFile(bipSound);
   
   // Init the arduinos
   println(Arduino.list());
@@ -125,7 +130,8 @@ void initGame()
 void newRound()
 {
   // Init var game
-  IntList listInputsToAdd = new IntList();
+  IntList listInputsToAdd1 = new IntList();
+  IntList listInputsToAdd2 = new IntList();
   for (int i = 0; i < numberInputs; ++i)
   {
     boolean find1 = false, find2 = false;
@@ -137,60 +143,63 @@ void newRound()
         find2 = true;
     }
     if (!find1)
-      listInputsToAdd.append(i);
+      listInputsToAdd1.append(i);
     if (!find2)
-      listInputsToAdd.append(i + numberInputs);
+      listInputsToAdd2.append(i + numberInputs);
   }
+  
   int i = 0;
   listInputs.clear();
-  int numberInputsToGenerate = int(random(numberMinimalInputs, numberMaximalInputs));
-  if (numberInputsToGenerate > listInputsToAdd.size())
-    numberInputsToGenerate = listInputsToAdd.size();
-  endTimerInput = timerStart + timerByInput * numberInputsToGenerate;
-  while (i < numberInputsToGenerate)
+  endTimerInput = timerStart + timerByInput * stepTwister[currentIndexStepTwister];
+  while (i < stepTwister[currentIndexStepTwister])
   {
-    int index = (int)random(listInputsToAdd.size());
-    int indexButton = listInputsToAdd.get(index);
-    if (indexButton >= numberInputs)
-    {
-      setPinState(arduinoP2, getLedPin(indexButton - numberInputs), Arduino.HIGH);
-      setPinState(arduinoP2, getRumblePin(indexButton - numberInputs), Arduino.HIGH);
-    }
-    else
-    {
-      setPinState(arduinoP1, getLedPin(indexButton), Arduino.HIGH);
-      setPinState(arduinoP1, getRumblePin(indexButton), Arduino.HIGH);
-    }
-    listInputs.append(indexButton);
-    listInputsToAdd.remove(index);
+    int index1 = (int)random(listInputsToAdd1.size());
+    int index2 = (int)random(listInputsToAdd2.size());
+    int indexButton1 = listInputsToAdd1.get(index1);
+    int indexButton2 = listInputsToAdd2.get(index2);
+    setPinState(arduinoP1, getLedPin(indexButton1), Arduino.HIGH);
+    setPinState(arduinoP1, getRumblePin(indexButton1), Arduino.HIGH);
+    setPinState(arduinoP2, getLedPin(indexButton2 - numberInputs), Arduino.HIGH);
+    setPinState(arduinoP2, getRumblePin(indexButton2 - numberInputs), Arduino.HIGH);
+    listInputs.append(indexButton1);
+    listInputs.append(indexButton2);
+    listInputsToAdd1.remove(index1);
+    listInputsToAdd2.remove(index2);
     i++;
   }
   println("listInputs " + listInputs);
   
   prevTime = millis();
+  previousTimerBip = prevTime;
 }
 
 void endGame()
 {
-  // Funk
-  stopAllRumble(arduinoP1);
-  stopAllRumble(arduinoP2);
-  stopAllLED(arduinoP1);
-  stopAllLED(arduinoP2);
-  for (int i = 0; i < numberTurnDisco + maxTurnDiscoToAdd; ++i)
+  ++currentIndexStepTwister;
+  if (currentIndexStepTwister >= stepTwister.length)
   {
-    for (int j = 0; j < numberInputChangeByDisco; ++j)
+    currentIndexStepTwister = 0;
+    
+    // Funk
+    stopAllRumble(arduinoP1);
+    stopAllRumble(arduinoP2);
+    stopAllLED(arduinoP1);
+    stopAllLED(arduinoP2);
+    for (int i = 0; i < numberTurnDisco + maxTurnDiscoToAdd; ++i)
     {
-      setPinState(arduinoP1, getLedPin((int)random(numberInputs)), (int)random(2));
-      setPinState(arduinoP2, getLedPin((int)random(numberInputs)), (int)random(2));
+      for (int j = 0; j < numberInputChangeByDisco; ++j)
+      {
+        setPinState(arduinoP1, getLedPin((int)random(numberInputs)), (int)random(2));
+        setPinState(arduinoP2, getLedPin((int)random(numberInputs)), (int)random(2));
+      }
+      if (i == numberTurnDisco + maxTurnDiscoToAdd - 1)
+        delay(timerAfterChangementDisco);
     }
-    if (i == numberTurnDisco + maxTurnDiscoToAdd - 1)
-      delay(timerAfterChangementDisco);
+    stopAllRumble(arduinoP1);
+    stopAllRumble(arduinoP2);
+    stopAllLED(arduinoP1);
+    stopAllLED(arduinoP2);
   }
-  stopAllRumble(arduinoP1);
-  stopAllRumble(arduinoP2);
-  stopAllLED(arduinoP1);
-  stopAllLED(arduinoP2);
   
   // Reset
   initGame();
@@ -224,6 +233,11 @@ void draw()
     if (millis() > timerBlink)
     {
       stateBlink = stateBlink == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
+      if (stateBlink == Arduino.HIGH)
+      {
+        audioBip.rewind();
+        audioBip.play();
+      }
       timerBlink = (int)(-log(timerBlinkBeforeTheEnd - millis() - prevTime - endTimerInput) * timerBlinkBeforeTheEnd / 2);
       for (int i = 0; i < listInputs.size(); ++i)
       {
@@ -238,6 +252,15 @@ void draw()
           setPinState(arduinoP2, getRumblePin(listInputs.get(i) - numberInputs), stateBlink);
         }
       }
+    }
+  }
+  else
+  {
+    if (millis() - previousTimerBip > timerPlayBip)
+    {
+        audioBip.rewind();
+        audioBip.play();
+        previousTimerBip = millis();
     }
   }
   
@@ -296,6 +319,7 @@ void stop()
   audioAreYouReady.close();
   audioStart.close();
   audioError.close();
+  audioBip.close();
   for (int i = 0; i < numberInputs; ++i)
     audioInputs.get(i).close();
   
