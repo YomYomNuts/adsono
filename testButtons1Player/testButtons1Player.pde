@@ -1,6 +1,7 @@
 import processing.serial.*;
 import cc.arduino.*;
 
+final boolean firstArduino = true;
 final int numberInputs = 5;
 boolean[] valueInputP1 = new boolean[numberInputs];
 int currentPinPressP1 = -1;
@@ -17,12 +18,12 @@ void setup()
   
   // Init analog tab
   currentPinPressP1 = -1;
-  InitInputs(valueInputP1, arduinoP1);
+  InitInputs(valueInputP1, arduinoP1, firstArduino);
 }
 
 void draw()
 {
-  GetInputs(valueInputP1, arduinoP1);
+  GetInputs(valueInputP1, arduinoP1, firstArduino);
   buttonReleased();
   buttonPressed();
 }
@@ -45,7 +46,7 @@ int getGeneralInput(int player)
     {
       println("Press buttonYellow 1");
       setPinState(arduinoP1, rumbleYellow, Arduino.HIGH);
-      setPinState(arduinoP1, ledYellow, Arduino.HIGH);
+      setPinState(arduinoP1, ledYellowP1, Arduino.HIGH);
       currentPinPressP1 = buttonYellow;
       return buttonYellow;
     }
@@ -53,7 +54,7 @@ int getGeneralInput(int player)
     {
       println("Press buttonGreen 1");
       setPinState(arduinoP1, rumbleGreen, Arduino.HIGH);
-      setPinState(arduinoP1, ledGreen, Arduino.HIGH);
+      setPinState(arduinoP1, ledGreenP1, Arduino.HIGH);
       currentPinPressP1 = buttonGreen;
       return buttonGreen;
     }
@@ -61,7 +62,7 @@ int getGeneralInput(int player)
     {
       println("Press buttonRed 1");
       setPinState(arduinoP1, rumbleRed, Arduino.HIGH);
-      setPinState(arduinoP1, ledRed, Arduino.HIGH);
+      setPinState(arduinoP1, ledRedP1, Arduino.HIGH);
       currentPinPressP1 = buttonRed;
       return buttonRed;
     }
@@ -69,7 +70,7 @@ int getGeneralInput(int player)
     {
       println("Press buttonBlue 1");
       setPinState(arduinoP1, rumbleBlue, Arduino.HIGH);
-      setPinState(arduinoP1, ledBlue, Arduino.HIGH);
+      setPinState(arduinoP1, ledBlueP1, Arduino.HIGH);
       currentPinPressP1 = buttonBlue;
       return buttonBlue;
     }
@@ -77,7 +78,7 @@ int getGeneralInput(int player)
     {
       println("Press buttonWhite 1");
       setPinState(arduinoP1, rumbleWhite, Arduino.HIGH);
-      setPinState(arduinoP1, ledWhite, Arduino.HIGH);
+      setPinState(arduinoP1, ledWhiteP1, Arduino.HIGH);
       currentPinPressP1 = buttonWhite;
       return buttonWhite;
     }
@@ -100,7 +101,7 @@ boolean checkKeyReleased(int player)
       if (!valueInputP1[currentPinPressP1])
       {
         stopAllRumble(arduinoP1);
-        stopAllLED(arduinoP1);
+        stopAllLED(arduinoP1, firstArduino);
         currentPinPressP1 = -1;
         find = true;
       }
@@ -113,5 +114,5 @@ void stop()
 {
   // Stop all
   stopAllRumble(arduinoP1);
-  stopAllLED(arduinoP1);
+  stopAllLED(arduinoP1, firstArduino);
 }

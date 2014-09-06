@@ -9,6 +9,7 @@ import ddf.minim.effects.*;
 
 
 // GD can change this values
+final boolean firstArduino = true;
 final int timerStart = 1000; // Timer in millisecond
 final int timerByInput = 1500; // Timer in millisecond
 final int timerNextTurn = 1000; // Timer in millisecond
@@ -103,8 +104,8 @@ void setup()
     currentPinPressP1[i] = false;
     currentPinPressP2[i] = false;
   }
-  InitInputs(valueInputP1, arduinoP1);
-  InitInputs(valueInputP2, arduinoP2);
+  InitInputs(valueInputP1, arduinoP1, firstArduino);
+  InitInputs(valueInputP2, arduinoP2, !firstArduino);
   
   // Init the game
   initGame();
@@ -157,9 +158,9 @@ void newRound()
     int index2 = (int)random(listInputsToAdd2.size());
     int indexButton1 = listInputsToAdd1.get(index1);
     int indexButton2 = listInputsToAdd2.get(index2);
-    setPinState(arduinoP1, getLedPin(indexButton1), Arduino.HIGH);
+    setPinState(arduinoP1, getLedPin(indexButton1, firstArduino), Arduino.HIGH);
     setPinState(arduinoP1, getRumblePin(indexButton1), Arduino.HIGH);
-    setPinState(arduinoP2, getLedPin(indexButton2 - numberInputs), Arduino.HIGH);
+    setPinState(arduinoP2, getLedPin(indexButton2 - numberInputs, !firstArduino), Arduino.HIGH);
     setPinState(arduinoP2, getRumblePin(indexButton2 - numberInputs), Arduino.HIGH);
     listInputs.append(indexButton1);
     listInputs.append(indexButton2);
@@ -183,22 +184,22 @@ void endGame()
     // Funk
     stopAllRumble(arduinoP1);
     stopAllRumble(arduinoP2);
-    stopAllLED(arduinoP1);
-    stopAllLED(arduinoP2);
+    stopAllLED(arduinoP1, firstArduino);
+    stopAllLED(arduinoP2, !firstArduino);
     for (int i = 0; i < numberTurnDisco + maxTurnDiscoToAdd; ++i)
     {
       for (int j = 0; j < numberInputChangeByDisco; ++j)
       {
-        setPinState(arduinoP1, getLedPin((int)random(numberInputs)), (int)random(2));
-        setPinState(arduinoP2, getLedPin((int)random(numberInputs)), (int)random(2));
+        setPinState(arduinoP1, getLedPin((int)random(numberInputs), firstArduino), (int)random(2));
+        setPinState(arduinoP2, getLedPin((int)random(numberInputs), !firstArduino), (int)random(2));
       }
       if (i == numberTurnDisco + maxTurnDiscoToAdd - 1)
         delay(timerAfterChangementDisco);
     }
     stopAllRumble(arduinoP1);
     stopAllRumble(arduinoP2);
-    stopAllLED(arduinoP1);
-    stopAllLED(arduinoP2);
+    stopAllLED(arduinoP1, firstArduino);
+    stopAllLED(arduinoP2, !firstArduino);
   }
   
   // Reset
@@ -207,8 +208,8 @@ void endGame()
 
 void draw()
 {
-  GetInputs(valueInputP1, arduinoP1);
-  GetInputs(valueInputP2, arduinoP2);
+  GetInputs(valueInputP1, arduinoP1, firstArduino);
+  GetInputs(valueInputP2, arduinoP2, !firstArduino);
   buttonState();
   
   // Check all
@@ -243,12 +244,12 @@ void draw()
       {
         if (listInputs.get(i) < numberInputs)
         {
-          setPinState(arduinoP1, getLedPin(listInputs.get(i)), stateBlink);
+          setPinState(arduinoP1, getLedPin(listInputs.get(i), firstArduino), stateBlink);
           setPinState(arduinoP1, getRumblePin(listInputs.get(i)), stateBlink);
         }
         else
         {
-          setPinState(arduinoP2, getLedPin(listInputs.get(i) - numberInputs), stateBlink);
+          setPinState(arduinoP2, getLedPin(listInputs.get(i) - numberInputs, !firstArduino), stateBlink);
           setPinState(arduinoP2, getRumblePin(listInputs.get(i) - numberInputs), stateBlink);
         }
       }
@@ -312,8 +313,8 @@ void stop()
   // Stop all
   stopAllRumble(arduinoP1);
   stopAllRumble(arduinoP2);
-  stopAllLED(arduinoP1);
-  stopAllLED(arduinoP2);
+  stopAllLED(arduinoP1, firstArduino);
+  stopAllLED(arduinoP2, !firstArduino);
   
   audioBG.close();
   audioAreYouReady.close();

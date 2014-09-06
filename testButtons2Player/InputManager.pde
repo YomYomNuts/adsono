@@ -1,9 +1,15 @@
 // Pin buttons
-final int pinbuttonYellow = 2;
-final int pinbuttonGreen = 3;
-final int pinbuttonRed = 4;
-final int pinbuttonBlue = 5;
-final int pinbuttonWhite = 6;
+final int pinbuttonYellowP1 = 40;
+final int pinbuttonGreenP1 = 37;
+final int pinbuttonRedP1 = 41;
+final int pinbuttonBlueP1 = 45;
+final int pinbuttonWhiteP1 = 36;
+
+final int pinbuttonYellowP2 = 27;
+final int pinbuttonGreenP2 = 25;
+final int pinbuttonRedP2 = 29;
+final int pinbuttonBlueP2 = 31;
+final int pinbuttonWhiteP2 = 33;
 
 // Position buttons
 final int buttonYellow = 0;
@@ -12,26 +18,48 @@ final int buttonRed = 2;
 final int buttonBlue = 3;
 final int buttonWhite = 4;
 
-void InitInputs(boolean pinValues[], Arduino arduino)
+void InitInputs(boolean pinValues[], Arduino arduino, boolean firstArduino)
 {
-  arduino.pinMode(pinbuttonYellow, Arduino.INPUT);
   pinValues[buttonYellow] = false;
-  arduino.pinMode(pinbuttonGreen, Arduino.INPUT);
   pinValues[buttonGreen] = false;
-  arduino.pinMode(pinbuttonRed, Arduino.INPUT);
   pinValues[buttonRed] = false;
-  arduino.pinMode(pinbuttonBlue, Arduino.INPUT);
   pinValues[buttonBlue] = false;
-  arduino.pinMode(pinbuttonWhite, Arduino.INPUT);
   pinValues[buttonWhite] = false;
+  if (firstArduino)
+  {
+    arduino.pinMode(pinbuttonYellowP1, Arduino.INPUT);
+    arduino.pinMode(pinbuttonGreenP1, Arduino.INPUT);
+    arduino.pinMode(pinbuttonRedP1, Arduino.INPUT);
+    arduino.pinMode(pinbuttonBlueP1, Arduino.INPUT);
+    arduino.pinMode(pinbuttonWhiteP1, Arduino.INPUT);
+  }
+  else
+  {
+    arduino.pinMode(pinbuttonYellowP2, Arduino.INPUT);
+    arduino.pinMode(pinbuttonGreenP2, Arduino.INPUT);
+    arduino.pinMode(pinbuttonRedP2, Arduino.INPUT);
+    arduino.pinMode(pinbuttonBlueP2, Arduino.INPUT);
+    arduino.pinMode(pinbuttonWhiteP2, Arduino.INPUT);
+  }
 }
 
-void GetInputs(boolean pinValues[], Arduino arduino)
+void GetInputs(boolean pinValues[], Arduino arduino, boolean firstArduino)
 {
   int valueButton = Arduino.LOW;
-  pinValues[buttonYellow] = (arduino.digitalRead(pinbuttonYellow) == valueButton) ? true : false;
-  pinValues[buttonGreen] = (arduino.digitalRead(pinbuttonGreen) == valueButton) ? true : false;
-  pinValues[buttonRed] = (arduino.digitalRead(pinbuttonRed) == valueButton) ? true : false;
-  pinValues[buttonBlue] = (arduino.digitalRead(pinbuttonBlue) == valueButton) ? true : false;
-  pinValues[buttonWhite] = (arduino.digitalRead(pinbuttonWhite) == valueButton) ? true : false;
+  if (firstArduino)
+  {
+    pinValues[buttonYellow] = (arduino.digitalRead(pinbuttonYellowP1) == valueButton) ? true : false;
+    pinValues[buttonGreen] = (arduino.digitalRead(pinbuttonGreenP1) == valueButton) ? true : false;
+    pinValues[buttonRed] = (arduino.digitalRead(pinbuttonRedP1) == valueButton) ? true : false;
+    pinValues[buttonBlue] = (arduino.digitalRead(pinbuttonBlueP1) == valueButton) ? true : false;
+    pinValues[buttonWhite] = (arduino.digitalRead(pinbuttonWhiteP1) == valueButton) ? true : false;
+  }
+  else
+  {
+    pinValues[buttonYellow] = (arduino.digitalRead(pinbuttonYellowP2) == valueButton) ? true : false;
+    pinValues[buttonGreen] = (arduino.digitalRead(pinbuttonGreenP2) == valueButton) ? true : false;
+    pinValues[buttonRed] = (arduino.digitalRead(pinbuttonRedP2) == valueButton) ? true : false;
+    pinValues[buttonBlue] = (arduino.digitalRead(pinbuttonBlueP2) == valueButton) ? true : false;
+    pinValues[buttonWhite] = (arduino.digitalRead(pinbuttonWhiteP2) == valueButton) ? true : false;
+  }
 }  

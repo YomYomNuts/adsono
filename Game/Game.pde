@@ -9,6 +9,7 @@ import ddf.minim.effects.*;
 
 
 // GD can change this values
+final boolean firstArduino = true;
 final int spaceBlackGetInput = 10; // Timer in millisecond
 final int numberInputByMesure = 2;
 final int timerLaunchRumbleDuringChangementPlayer = 3; // Timer in frame
@@ -141,8 +142,8 @@ void setup()
   // Init input tab
   currentPinPressP1 = -1;
   currentPinPressP2 = -1;
-  InitInputs(valueInputP1, arduinoP1);
-  InitInputs(valueInputP2, arduinoP2);
+  InitInputs(valueInputP1, arduinoP1, firstArduino);
+  InitInputs(valueInputP2, arduinoP2, !firstArduino);
   
   // Init var game
   playerStartGame = PLAYER1;
@@ -152,6 +153,7 @@ void setup()
 void initGame()
 {
   Arduino arduinoFirstPlayer = playerStartGame == PLAYER1 ? arduinoP1 : arduinoP2;
+  boolean firstArduinoStart = playerStartGame == PLAYER1 ? firstArduino : !firstArduino;
   int otherPlayer = playerStartGame == PLAYER1 ? PLAYER2 : PLAYER1;
   Arduino arduinoOtherPlayer = otherPlayer == PLAYER1 ? arduinoP1 : arduinoP2;
   
@@ -176,7 +178,7 @@ void initGame()
     }
   }
   listInputs.append(value);
-  int pinLed = getLedPin(listInputs.get(0) - playerStartGame * numberInputs);
+  int pinLed = getLedPin(listInputs.get(0) - playerStartGame * numberInputs, firstArduinoStart);
   if (pinLed != -1)
   {
     setPinState(arduinoFirstPlayer, pinLed, Arduino.HIGH);
@@ -199,7 +201,7 @@ void initGame()
     }
   }
   listInputs.append(value);
-  pinLed = getLedPin(listInputs.get(1) - otherPlayer * numberInputs);
+  pinLed = getLedPin(listInputs.get(1) - otherPlayer * numberInputs, !firstArduinoStart);
   if (pinLed != -1)
   {
     setPinState(arduinoOtherPlayer, pinLed, Arduino.HIGH);
@@ -238,8 +240,8 @@ void initGame()
 
 void draw()
 {
-  GetInputs(valueInputP1, arduinoP1);
-  GetInputs(valueInputP2, arduinoP2);
+  GetInputs(valueInputP1, arduinoP1, firstArduino);
+  GetInputs(valueInputP2, arduinoP2, !firstArduino);
   buttonReleased();
   buttonPressed();
   
@@ -256,9 +258,9 @@ void draw()
     {
       println("Wait next player");
       stopAllRumble(arduinoP1);
-      stopAllLED(arduinoP1);
+      stopAllLED(arduinoP1, firstArduino);
       stopAllRumble(arduinoP2);
-      stopAllLED(arduinoP2);
+      stopAllLED(arduinoP2, !firstArduino);
       
       audioFill.rewind();
       audioFill.play();
@@ -289,9 +291,9 @@ void draw()
     {
       println("Wait next player");
       stopAllRumble(arduinoP1);
-      stopAllLED(arduinoP1);
+      stopAllLED(arduinoP1, firstArduino);
       stopAllRumble(arduinoP2);
-      stopAllLED(arduinoP2);
+      stopAllLED(arduinoP2, !firstArduino);
       
       audioFill.rewind();
       audioFill.play();
@@ -355,21 +357,22 @@ void endRound()
 void sequenceEndRound(int winner,int looser)
 {
     Arduino arduinoWinner = winner == PLAYER1 ? arduinoP1 : arduinoP2;
+    boolean firstArduinoWinner = winner == PLAYER1 ? firstArduino : !firstArduino;
     
     audioWin.rewind();
     audioWin.play();
     delay(timerWinSound);
     
-    stopAllLED(arduinoP1);
-    stopAllLED(arduinoP2);
+    stopAllLED(arduinoP1, firstArduino);
+    stopAllLED(arduinoP2, !firstArduino);
     stopAllRumble(arduinoP1);
     stopAllRumble(arduinoP2);
     
     for (int i = 0; i < numberBlinkVictory; ++i)
     {
-      fireAllLED(arduinoWinner);
+      fireAllLED(arduinoWinner, firstArduinoWinner);
       delay(timerChrismasTree);
-      stopAllLED(arduinoWinner);
+      stopAllLED(arduinoWinner, firstArduinoWinner);
       delay(timerChrismasTree);
     }
 }
@@ -400,7 +403,7 @@ void giveTempo()
       int input = listInputs.get(currentInput);
       if (input >= numberInputs)
       {
-        int pinLed = getLedPin(input - numberInputs);
+        int pinLed = getLedPin(input - numberInputs, !firstArduino);
         int pinRumble = getRumblePin(input - numberInputs);
         if (pinLed != -1)
           setPinState(arduinoP2, pinLed, Arduino.HIGH);
@@ -409,7 +412,7 @@ void giveTempo()
       }
       else
       {
-        int pinLed = getLedPin(input);
+        int pinLed = getLedPin(input, firstArduino);
         int pinRumble = getRumblePin(input);
         if (pinLed != -1)
           setPinState(arduinoP1, pinLed, Arduino.HIGH);
@@ -425,7 +428,7 @@ void giveTempo()
       int input = listInputs.get(currentInput);
       if (input >= numberInputs)
       {
-        int pinLed = getLedPin(input - numberInputs);
+        int pinLed = getLedPin(input - numberInputs, !firstArduino);
         int pinRumble = getRumblePin(input - numberInputs);
         if (pinLed != -1)
           setPinState(arduinoP2, pinLed, Arduino.LOW);
@@ -434,7 +437,7 @@ void giveTempo()
       }
       else
       {
-        int pinLed = getLedPin(input);
+        int pinLed = getLedPin(input, firstArduino);
         int pinRumble = getRumblePin(input);
         if (pinLed != -1)
           setPinState(arduinoP1, pinLed, Arduino.LOW);
@@ -446,8 +449,8 @@ void giveTempo()
   if (currentTime > tempo + spaceTimeGetInput[current_bpm_index])
   {
     println("Stop Press");
-    stopAllLED(arduinoP1);
-    stopAllLED(arduinoP2);
+    stopAllLED(arduinoP1, firstArduino);
+    stopAllLED(arduinoP2, !firstArduino);
     stopAllRumble(arduinoP1);
     stopAllRumble(arduinoP2);
     if (canGetInput)
@@ -545,8 +548,8 @@ void buttonPressed()
         // Stop the rumble and the leds of this action
         stopAllRumble(arduinoP1);
         stopAllRumble(arduinoP2);
-        stopAllLED(arduinoP1);
-        stopAllLED(arduinoP2);
+        stopAllLED(arduinoP1, firstArduino);
+        stopAllLED(arduinoP2, !firstArduino);
         
         int stateFail, stateFinish;
         if (currentState == stateReproductP1)
@@ -587,7 +590,7 @@ void buttonPressed()
         // Add the input
         listInputs.append(currentGeneralInputPress);
         
-        int pin = getLedPin(normalizeInput);
+        int pin = currentGeneralInputPress >= numberInputs ? getLedPin(normalizeInput, !firstArduino) : getLedPin(normalizeInput, firstArduino);
         if (pin != -1)
         {
           if (currentGeneralInputPress >= numberInputs)
@@ -734,8 +737,8 @@ void buttonReleased()
     {
       if (checkKeyReleased((currentState == stateRecordP1 || currentState == stateChangePlayerP1toP2) ? PLAYER1 : PLAYER2))
       {
-        stopAllLED(arduinoP1);
-        stopAllLED(arduinoP2);
+        stopAllLED(arduinoP1, firstArduino);
+        stopAllLED(arduinoP2, !firstArduino);
       }
     } break;
     default:
@@ -791,8 +794,8 @@ void stop()
   // Stop all
   stopAllRumble(arduinoP1);
   stopAllRumble(arduinoP2);
-  stopAllLED(arduinoP1);
-  stopAllLED(arduinoP2);
+  stopAllLED(arduinoP1, firstArduino);
+  stopAllLED(arduinoP2, !firstArduino);
   
   // Stop all sounds
   audioBG.close();

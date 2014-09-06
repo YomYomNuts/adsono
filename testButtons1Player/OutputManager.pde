@@ -1,16 +1,22 @@
 // Rumble pin
-final int rumbleYellow = 49;
-final int rumbleGreen = 48;
-final int rumbleRed = 47;
-final int rumbleBlue = 46;
-final int rumbleWhite = 45;
+final int rumbleYellow = 2;
+final int rumbleGreen = 3;
+final int rumbleRed = 4;
+final int rumbleBlue = 5;
+final int rumbleWhite = 6;
 
 // Led pin
-final int ledYellow = 19;
-final int ledGreen = 18;
-final int ledRed = 17;
-final int ledBlue = 16;
-final int ledWhite = 15;
+final int ledYellowP1 = 43;
+final int ledGreenP1 = 34;
+final int ledRedP1 = 38;
+final int ledBlueP1 = 42;
+final int ledWhiteP1 = 39;
+
+final int ledYellowP2 = 24;
+final int ledGreenP2 = 22;
+final int ledRedP2 = 26;
+final int ledBlueP2 = 28;
+final int ledWhiteP2 = 30;
 
 void stopAllRumble(Arduino arduino)
 {
@@ -21,39 +27,80 @@ void stopAllRumble(Arduino arduino)
   setPinState(arduino, rumbleWhite, Arduino.LOW);
 }
 
-void stopAllLED(Arduino arduino)
+void stopAllLED(Arduino arduino, boolean firstArduino)
 {
-  setPinState(arduino, ledYellow, Arduino.LOW);
-  setPinState(arduino, ledGreen, Arduino.LOW);
-  setPinState(arduino, ledRed, Arduino.LOW);
-  setPinState(arduino, ledBlue, Arduino.LOW);
-  setPinState(arduino, ledWhite, Arduino.LOW);
-}
-
-void fireAllLED(Arduino arduino)
-{
-  setPinState(arduino, ledYellow, Arduino.HIGH);
-  setPinState(arduino, ledGreen, Arduino.HIGH);
-  setPinState(arduino, ledRed, Arduino.HIGH);
-  setPinState(arduino, ledBlue, Arduino.HIGH);
-  setPinState(arduino, ledWhite, Arduino.HIGH);
-}
-
-int getLedPin(int input)
-{
-  switch (input)
+  if (firstArduino)
   {
-     case buttonYellow : 
-       return ledYellow;
-     case buttonGreen : 
-       return ledGreen;
-     case buttonRed : 
-       return ledRed;
-     case buttonBlue : 
-       return ledBlue;
-     case buttonWhite : 
-       return ledWhite;
-   }
+    setPinState(arduino, ledYellowP1, Arduino.LOW);
+    setPinState(arduino, ledGreenP1, Arduino.LOW);
+    setPinState(arduino, ledRedP1, Arduino.LOW);
+    setPinState(arduino, ledBlueP1, Arduino.LOW);
+    setPinState(arduino, ledWhiteP1, Arduino.LOW);
+  }
+  else
+  {
+    setPinState(arduino, ledYellowP2, Arduino.LOW);
+    setPinState(arduino, ledGreenP2, Arduino.LOW);
+    setPinState(arduino, ledRedP2, Arduino.LOW);
+    setPinState(arduino, ledBlueP2, Arduino.LOW);
+    setPinState(arduino, ledWhiteP2, Arduino.LOW);
+  }
+}
+
+void fireAllLED(Arduino arduino, boolean firstArduino)
+{
+  if (firstArduino)
+  {
+    setPinState(arduino, ledYellowP1, Arduino.HIGH);
+    setPinState(arduino, ledGreenP1, Arduino.HIGH);
+    setPinState(arduino, ledRedP1, Arduino.HIGH);
+    setPinState(arduino, ledBlueP1, Arduino.HIGH);
+    setPinState(arduino, ledWhiteP1, Arduino.HIGH);
+  }
+  else
+  {
+    setPinState(arduino, ledYellowP2, Arduino.HIGH);
+    setPinState(arduino, ledGreenP2, Arduino.HIGH);
+    setPinState(arduino, ledRedP2, Arduino.HIGH);
+    setPinState(arduino, ledBlueP2, Arduino.HIGH);
+    setPinState(arduino, ledWhiteP2, Arduino.HIGH);
+  }
+}
+
+int getLedPin(int input, boolean firstArduino)
+{
+  if (firstArduino)
+  {
+    switch (input)
+    {
+       case buttonYellow : 
+         return ledYellowP1;
+       case buttonGreen : 
+         return ledGreenP1;
+       case buttonRed : 
+         return ledRedP1;
+       case buttonBlue : 
+         return ledBlueP1;
+       case buttonWhite : 
+         return ledWhiteP1;
+     }
+  }
+  else
+  {
+    switch (input)
+    {
+       case buttonYellow : 
+         return ledYellowP2;
+       case buttonGreen : 
+         return ledGreenP2;
+       case buttonRed : 
+         return ledRedP2;
+       case buttonBlue : 
+         return ledBlueP2;
+       case buttonWhite : 
+         return ledWhiteP2;
+     }
+  }
    return -1;
 }
 
