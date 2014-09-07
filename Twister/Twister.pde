@@ -10,8 +10,8 @@ import ddf.minim.effects.*;
 
 // GD can change this values
 final boolean firstArduino = true;
-final int timerStart = 1000; // Timer in millisecond
-final int timerByInput = 1500; // Timer in millisecond
+final int timerStart = 3000; // Timer in millisecond
+final int timerByInput = 10000; // Timer in millisecond
 final int timerNextTurn = 1000; // Timer in millisecond
 final int numberStartTurnDisco = 100; // Number start turns of disco
 final int numberTurnDisco = 10; // Number minimal turns of disco 
@@ -21,8 +21,10 @@ final int timerAfterChangementDisco = 150; // Timer in millisecond
 final int addButtonAllRound = 10;
 final int timerEndOpportinity = 150; // Timer in millisecond
 final int timerBlinkBeforeTheEnd = 1000; // Timer in millisecond
-final int stepTwister[] = { 3, 3, 3, 3, 4, 4, 4, 5 }; // Number button by player
+final int stepTwister[] = { 2, 2, 3, 3, 3, 4 }; // Number button by player
 final int timerPlayBip = 1000; // Timer in millisecond
+final int timerChrismasTree = 500; // Timer in millisecond
+final int numberBlinkVictory = 3;
 
 // Sounds
 final String BGSound = "Music/background.wav";
@@ -37,6 +39,12 @@ final String startSound = "Music/voices/start.wav";
 final int timerStartSound = 1130; // Timer in millisecond
 final String errorSound = "Music/error.wav";
 final String bipSound = "Music/bip.wav";
+final String endSound = "Music/voices/end.wav";
+final int timerEndSound = 3130; // Timer in millisecond
+final String winTwisterSound = "Music/voices/winTwister.wav";
+final int timerWinTwisterSound = 4130; // Timer in millisecond
+final String nextRoundSound = "Music/fill.wav";
+final int timerNextRoundSound = 750; // Timer in millisecond
 
 // Inputs
 final int numberInputs = 5;
@@ -61,7 +69,7 @@ int endTimerInput;
 int prevTime;
 int timerBlink;
 int stateBlink;
-int currentIndexStepTwister = -1;
+int currentIndexStepTwister;
 int previousTimerBip;
 
 // Music
@@ -72,9 +80,24 @@ AudioPlayer audioAreYouReady;
 AudioPlayer audioStart;
 AudioPlayer audioError;
 AudioPlayer audioBip;
+AudioPlayer audioEnd;
+AudioPlayer audioWinTwister;
+AudioPlayer audioNextRound;
+
+int rectX, rectY;      // Position of square button
+int rectSize = 90;     // Diameter of rect
+color rectColor, rectHighlight;
+boolean rectOver = false;
 
 void setup()
 {
+  // Init Window
+  size(320, 160);
+  rectColor = color(0);
+  rectHighlight = color(51);
+  rectX = width/2-rectSize;
+  rectY = height/2-rectSize/2;
+  
   // Sound
   minim = new Minim(this);
   
@@ -92,6 +115,9 @@ void setup()
   audioStart = minim.loadFile(startSound);
   audioError = minim.loadFile(errorSound);
   audioBip = minim.loadFile(bipSound);
+  audioEnd = minim.loadFile(endSound);
+  audioWinTwister = minim.loadFile(winTwisterSound);
+  audioNextRound = minim.loadFile(nextRoundSound);
   
   // Init the arduinos
   println(Arduino.list());
@@ -107,6 +133,14 @@ void setup()
   InitInputs(valueInputP1, arduinoP1, firstArduino);
   InitInputs(valueInputP2, arduinoP2, !firstArduino);
   
+  // Warn players that the game will start
+  audioAreYouReady.rewind();
+  audioAreYouReady.play();
+  delay(timerAreYouReadySound);
+  audioStart.rewind();
+  audioStart.play();
+  delay(timerStartSound);
+  
   // Init the game
   initGame();
 }
@@ -115,14 +149,6 @@ void initGame()
 {
   // Init var game
   stateBlink = Arduino.HIGH;
-  
-  // Warn players that the game will start
-  audioAreYouReady.rewind();
-  audioAreYouReady.play();
-  delay(timerAreYouReadySound);
-  audioStart.rewind();
-  audioStart.play();
-  delay(timerStartSound);
   
   // Initialize the round
   newRound();
@@ -180,34 +206,100 @@ void endGame()
   if (currentIndexStepTwister >= stepTwister.length)
   {
     currentIndexStepTwister = 0;
+    audioWinTwister.rewind();
+    audioWinTwister.play();
     
     // Funk
     stopAllRumble(arduinoP1);
     stopAllRumble(arduinoP2);
     stopAllLED(arduinoP1, firstArduino);
     stopAllLED(arduinoP2, !firstArduino);
-    for (int i = 0; i < numberTurnDisco + maxTurnDiscoToAdd; ++i)
+    for (int i = 0; i < numberBlinkVictory; ++i)
     {
-      for (int j = 0; j < numberInputChangeByDisco; ++j)
-      {
-        setPinState(arduinoP1, getLedPin((int)random(numberInputs), firstArduino), (int)random(2));
-        setPinState(arduinoP2, getLedPin((int)random(numberInputs), !firstArduino), (int)random(2));
-      }
-      if (i == numberTurnDisco + maxTurnDiscoToAdd - 1)
-        delay(timerAfterChangementDisco);
+      fireAllLED(arduinoP1, firstArduino);
+      fireAllLED(arduinoP2, !firstArduino);
+      delay(timerChrismasTree);
+      stopAllLED(arduinoP1, firstArduino);
+      stopAllLED(arduinoP2, !firstArduino);
+      delay(timerChrismasTree);
     }
-    stopAllRumble(arduinoP1);
-    stopAllRumble(arduinoP2);
-    stopAllLED(arduinoP1, firstArduino);
-    stopAllLED(arduinoP2, !firstArduino);
+    delay(timerWinTwisterSound);
+    
+    // Warn players that the game will start
+    audioAreYouReady.rewind();
+    audioAreYouReady.play();
+    delay(timerAreYouReadySound);
+    audioStart.rewind();
+    audioStart.play();
+    delay(timerStartSound);
   }
+  stopAllRumble(arduinoP1);
+  stopAllRumble(arduinoP2);
+  stopAllLED(arduinoP1, firstArduino);
+  stopAllLED(arduinoP2, !firstArduino);
   
   // Reset
   initGame();
 }
 
+void mousePressed()
+{
+  if (rectOver)
+  {
+    // Reset
+    stopAllRumble(arduinoP1);
+    stopAllRumble(arduinoP2);
+    stopAllLED(arduinoP1, firstArduino);
+    stopAllLED(arduinoP2, !firstArduino);
+    currentIndexStepTwister = 0;
+    
+    // Warn players that the game will start
+    audioAreYouReady.rewind();
+    audioAreYouReady.play();
+    delay(timerAreYouReadySound);
+    audioStart.rewind();
+    audioStart.play();
+    delay(timerStartSound);
+    
+    initGame();
+  }
+}
+
+boolean overRect(int x, int y, int width, int height)
+{
+  if (mouseX >= x && mouseX <= x+width && mouseY >= y && mouseY <= y+height)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
 void draw()
 {
+  // Button
+  background(color(102));
+  if (rectOver)
+  {
+    fill(rectHighlight);
+  }
+  else
+  {
+    fill(rectColor);
+  }
+  stroke(255);
+  rect(rectX, rectY, rectSize, rectSize);
+  if ( overRect(rectX, rectY, rectSize, rectSize) )
+  {
+    rectOver = true;
+  }
+  else
+  {
+    rectOver = false;
+  }
+  
   GetInputs(valueInputP1, arduinoP1, firstArduino);
   GetInputs(valueInputP2, arduinoP2, !firstArduino);
   buttonState();
@@ -269,11 +361,28 @@ void draw()
   if (millis() > prevTime + endTimerInput)
   {
     println("End round! Too slow!");
+    currentIndexStepTwister = -1;
+    
+    audioEnd.rewind();
+    audioEnd.play();
+    delay(timerEndSound);
+    
+    // Warn players that the game will start
+    audioAreYouReady.rewind();
+    audioAreYouReady.play();
+    delay(timerAreYouReadySound);
+    audioStart.rewind();
+    audioStart.play();
+    delay(timerStartSound);
+    
     endGame();
   }
   else if (nbFind == listInputs.size())
   {
     println("End!");
+    audioNextRound.rewind();
+    audioNextRound.play();
+    delay(timerNextRoundSound);
     endGame();
   }
 }
