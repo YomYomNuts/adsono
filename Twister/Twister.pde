@@ -21,10 +21,18 @@ final int timerAfterChangementDisco = 150; // Timer in millisecond
 final int addButtonAllRound = 10;
 final int timerEndOpportinity = 150; // Timer in millisecond
 final int timerBlinkBeforeTheEnd = 1000; // Timer in millisecond
-final int stepTwister[] = { 2, 2, 3, 3, 3, 4 }; // Number button by player
+final int stepTwisterNormal[] = { 2, 2, 3, 3, 3, 4 }; // Number button by player
+final int stepTwisterHard[] = { 3, 3, 4, 4, 4, 5 }; // Number button by player
 final int timerPlayBip = 1000; // Timer in millisecond
 final int timerChrismasTree = 500; // Timer in millisecond
 final int numberBlinkVictory = 3;
+final color backgroundColor = color(100, 100, 100, 255);
+final color buttonColor = color(0, 0, 0, 0);
+final color buttonHighlight = color(55, 55, 55, 255);
+final color textColor = color(200, 200, 200, 255);
+final color textHighlight = color(255, 255, 255, 255);
+final int buttonSize = 90;
+final int offsetBetweenButton = 10;
 
 // Sounds
 final String BGSound = "Music/background.wav";
@@ -71,6 +79,8 @@ int timerBlink;
 int stateBlink;
 int currentIndexStepTwister;
 int previousTimerBip;
+boolean levelDifficultyNormal = true;
+int stepTwister[];
 
 // Music
 Minim minim;
@@ -84,19 +94,18 @@ AudioPlayer audioEnd;
 AudioPlayer audioWinTwister;
 AudioPlayer audioNextRound;
 
-int rectX, rectY;      // Position of square button
-int rectSize = 90;     // Diameter of rect
-color rectColor, rectHighlight;
-boolean rectOver = false;
+// Rendering
+int buttonX, buttonY;      // Position of square button
+boolean buttonReset = false;
+boolean buttonNormal = false;
+boolean buttonHard = false;
 
 void setup()
 {
   // Init Window
   size(320, 160);
-  rectColor = color(0);
-  rectHighlight = color(51);
-  rectX = width/2-rectSize;
-  rectY = height/2-rectSize/2;
+  buttonX = width / 2 - buttonSize * 3 / 2 - offsetBetweenButton;
+  buttonY = height / 2 - buttonSize / 2;
   
   // Sound
   minim = new Minim(this);
@@ -177,6 +186,10 @@ void newRound()
   
   int i = 0;
   listInputs.clear();
+  if (levelDifficultyNormal)
+    stepTwister = stepTwisterNormal;
+  else
+    stepTwister = stepTwisterHard;
   endTimerInput = timerStart + timerByInput * stepTwister[currentIndexStepTwister];
   while (i < stepTwister[currentIndexStepTwister])
   {
@@ -244,8 +257,22 @@ void endGame()
 
 void mousePressed()
 {
-  if (rectOver)
+  if (buttonNormal)
   {
+    buttonNormal = false;
+    buttonReset = true;
+    levelDifficultyNormal= true;
+  }
+  if (buttonHard)
+  {
+    buttonHard = false;
+    buttonReset = true;
+    levelDifficultyNormal= false;
+  }
+  if (buttonReset)
+  {
+    buttonReset = false;
+
     // Reset
     stopAllRumble(arduinoP1);
     stopAllRumble(arduinoP2);
@@ -265,41 +292,33 @@ void mousePressed()
   }
 }
 
-boolean overRect(int x, int y, int width, int height)
+boolean drawButton(String textToDisplay, int x, int y, int width, int height)
 {
-  if (mouseX >= x && mouseX <= x+width && mouseY >= y && mouseY <= y+height)
-  {
-    return true;
-  }
+  boolean buttonIsOver = (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height);
+  if (buttonIsOver)
+    fill(buttonHighlight);
   else
-  {
-    return false;
-  }
+    fill(buttonColor);
+  rect(x, y, width, height);
+  if (buttonIsOver)
+    fill(textHighlight);
+  else
+    fill(textColor);
+  text(textToDisplay, x + width / 2, y + height / 2);
+  return buttonIsOver;
 }
 
 void draw()
 {
   // Button
-  background(color(102));
-  if (rectOver)
-  {
-    fill(rectHighlight);
-  }
-  else
-  {
-    fill(rectColor);
-  }
-  stroke(255);
-  rect(rectX, rectY, rectSize, rectSize);
-  if ( overRect(rectX, rectY, rectSize, rectSize) )
-  {
-    rectOver = true;
-  }
-  else
-  {
-    rectOver = false;
-  }
-  
+  background(backgroundColor);
+  textAlign(CENTER);
+  buttonReset = drawButton("Reset Game", buttonX, buttonY, buttonSize, buttonSize);
+  buttonNormal = drawButton("Normal Game", buttonX + (buttonSize + offsetBetweenButton), buttonY, buttonSize, buttonSize);
+  buttonHard = drawButton("Hard Game", buttonX + (buttonSize + offsetBetweenButton) * 2, buttonY, buttonSize, buttonSize);
+
+
+  // Get inputs
   GetInputs(valueInputP1, arduinoP1, firstArduino);
   GetInputs(valueInputP2, arduinoP2, !firstArduino);
   buttonState();
@@ -311,12 +330,12 @@ void draw()
     if (listInputs.get(i) < numberInputs)
     {
       if (currentPinPressP1[listInputs.get(i)])
-          ++nbFind;
+        ++nbFind;
     }
     else
     {
       if (currentPinPressP2[listInputs.get(i) - numberInputs])
-          ++nbFind;
+        ++nbFind;
     }
   }
   
@@ -351,9 +370,9 @@ void draw()
   {
     if (millis() - previousTimerBip > timerPlayBip)
     {
-        audioBip.rewind();
-        audioBip.play();
-        previousTimerBip = millis();
+      audioBip.rewind();
+      audioBip.play();
+      previousTimerBip = millis();
     }
   }
   
@@ -380,9 +399,12 @@ void draw()
   else if (nbFind == listInputs.size())
   {
     println("End!");
-    audioNextRound.rewind();
-    audioNextRound.play();
-    delay(timerNextRoundSound);
+    if (currentIndexStepTwister < stepTwister.length - 1)
+    {
+      audioNextRound.rewind();
+      audioNextRound.play();
+      delay(timerNextRoundSound);
+    }
     endGame();
   }
 }
@@ -400,9 +422,8 @@ void buttonState()
       audioInputs.get(i).play();
     }
     else if (!valueInputP1[i])
-    {
       currentPinPressP1[i] = false;
-    }
+
     // Player 2
     if (!currentPinPressP2[i] && valueInputP2[i])
     {
@@ -411,9 +432,7 @@ void buttonState()
       audioInputs.get(i).play();
     }
     else if (!valueInputP2[i])
-    {
       currentPinPressP2[i] = false;
-    }
   }
 }
 
