@@ -20,10 +20,10 @@ final int numberInputChangeByDisco = 5;
 final int timerAfterChangementDisco = 150; // Timer in millisecond
 final int addButtonAllRound = 10;
 final int timerEndOpportinity = 150; // Timer in millisecond
-final int timerBlinkBeforeTheEnd = 1000; // Timer in millisecond
+final int timerBlinkBeforeTheEnd = 5000; // Timer in millisecond
 final int stepTwisterNormal[] = { 2, 2, 3, 3, 3, 4 }; // Number button by player
 final int stepTwisterHard[] = { 3, 3, 4, 4, 4, 5 }; // Number button by player
-final int timerPlayBip = 1000; // Timer in millisecond
+final int timerPlayBip = 100000; // Timer in millisecond
 final int timerChrismasTree = 500; // Timer in millisecond
 final int numberBlinkVictory = 3;
 final color backgroundColor = color(100, 100, 100, 255);
@@ -33,6 +33,7 @@ final color textColor = color(200, 200, 200, 255);
 final color textHighlight = color(255, 255, 255, 255);
 final int buttonSize = 90;
 final int offsetBetweenButton = 10;
+final int offsetTimerBeforeFirstBip = 100;
 
 // Sounds
 final String BGSound = "Music/background.wav";
@@ -81,6 +82,8 @@ int currentIndexStepTwister;
 int previousTimerBip;
 boolean levelDifficultyNormal = true;
 int stepTwister[];
+boolean gameIsFinish = false;
+int timeStartGame;
 
 // Music
 Minim minim;
@@ -209,8 +212,10 @@ void newRound()
   }
   println("listInputs " + listInputs);
   
+  gameIsFinish = false;
   prevTime = millis();
   previousTimerBip = prevTime;
+  timeStartGame = prevTime;
 }
 
 void endGame()
@@ -237,22 +242,13 @@ void endGame()
       delay(timerChrismasTree);
     }
     delay(timerWinTwisterSound);
-    
-    // Warn players that the game will start
-    audioAreYouReady.rewind();
-    audioAreYouReady.play();
-    delay(timerAreYouReadySound);
-    audioStart.rewind();
-    audioStart.play();
-    delay(timerStartSound);
   }
   stopAllRumble(arduinoP1);
   stopAllRumble(arduinoP2);
   stopAllLED(arduinoP1, firstArduino);
   stopAllLED(arduinoP2, !firstArduino);
   
-  // Reset
-  initGame();
+  gameIsFinish = true;
 }
 
 void mousePressed()
@@ -310,6 +306,8 @@ boolean drawButton(String textToDisplay, int x, int y, int width, int height)
 
 void draw()
 {
+  int currentMillis = millis();
+  
   // Button
   background(backgroundColor);
   textAlign(CENTER);
@@ -317,95 +315,97 @@ void draw()
   buttonNormal = drawButton("Normal Game", buttonX + (buttonSize + offsetBetweenButton), buttonY, buttonSize, buttonSize);
   buttonHard = drawButton("Hard Game", buttonX + (buttonSize + offsetBetweenButton) * 2, buttonY, buttonSize, buttonSize);
 
-
-  // Get inputs
-  GetInputs(valueInputP1, arduinoP1, firstArduino);
-  GetInputs(valueInputP2, arduinoP2, !firstArduino);
-  buttonState();
-  
-  // Check all
-  int nbFind = 0;
-  for (int i = 0; i < listInputs.size(); ++i)
+  if (!gameIsFinish)
   {
-    if (listInputs.get(i) < numberInputs)
+    // Get inputs
+    GetInputs(valueInputP1, arduinoP1, firstArduino);
+    GetInputs(valueInputP2, arduinoP2, !firstArduino);
+    buttonState();
+    
+    // Check all
+    int nbFind = 0;
+    for (int i = 0; i < listInputs.size(); ++i)
     {
-      if (currentPinPressP1[listInputs.get(i)])
-        ++nbFind;
+      if (listInputs.get(i) < numberInputs)
+      {
+        if (currentPinPressP1[listInputs.get(i)])
+          ++nbFind;
+      }
+      else
+      {
+        if (currentPinPressP2[listInputs.get(i) - numberInputs])
+          ++nbFind;
+      }
+    }
+    
+    // Blink
+    if (currentMillis > prevTime + endTimerInput - timerBlinkBeforeTheEnd)
+    {
+      if (currentMillis > timerBlink)
+      {
+        stateBlink = stateBlink == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
+        if (stateBlink == Arduino.HIGH)
+        {
+          if (currentMillis > timeStartGame + offsetTimerBeforeFirstBip)
+          {
+            audioBip.rewind();
+            audioBip.play();
+          }
+        }
+        timerBlink = (int)(-log(timerBlinkBeforeTheEnd - currentMillis - prevTime - endTimerInput) * timerBlinkBeforeTheEnd / 2);
+        for (int i = 0; i < listInputs.size(); ++i)
+        {
+          if (listInputs.get(i) < numberInputs)
+          {
+            setPinState(arduinoP1, getLedPin(listInputs.get(i), firstArduino), stateBlink);
+            setPinState(arduinoP1, getRumblePin(listInputs.get(i)), stateBlink);
+          }
+          else
+          {
+            setPinState(arduinoP2, getLedPin(listInputs.get(i) - numberInputs, !firstArduino), stateBlink);
+            setPinState(arduinoP2, getRumblePin(listInputs.get(i) - numberInputs), stateBlink);
+          }
+        }
+      }
     }
     else
     {
-      if (currentPinPressP2[listInputs.get(i) - numberInputs])
-        ++nbFind;
-    }
-  }
-  
-  // Blink
-  if (millis() > prevTime + endTimerInput - timerBlinkBeforeTheEnd)
-  {
-    if (millis() > timerBlink)
-    {
-      stateBlink = stateBlink == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
-      if (stateBlink == Arduino.HIGH)
+      if (currentMillis - previousTimerBip > timerPlayBip)
       {
         audioBip.rewind();
         audioBip.play();
+        previousTimerBip = currentMillis;
       }
-      timerBlink = (int)(-log(timerBlinkBeforeTheEnd - millis() - prevTime - endTimerInput) * timerBlinkBeforeTheEnd / 2);
-      for (int i = 0; i < listInputs.size(); ++i)
+    }
+    
+    // End round
+    if (currentMillis > prevTime + endTimerInput)
+    {
+      println("End round! Too slow!");
+      currentIndexStepTwister = -1;
+      
+      stopAllRumble(arduinoP1);
+      stopAllRumble(arduinoP2);
+      stopAllLED(arduinoP1, firstArduino);
+      stopAllLED(arduinoP2, !firstArduino);
+      
+      audioEnd.rewind();
+      audioEnd.play();
+      delay(timerEndSound);
+      
+      endGame();
+    }
+    else if (nbFind == listInputs.size())
+    {
+      println("End!");
+      if (currentIndexStepTwister < stepTwister.length - 1)
       {
-        if (listInputs.get(i) < numberInputs)
-        {
-          setPinState(arduinoP1, getLedPin(listInputs.get(i), firstArduino), stateBlink);
-          setPinState(arduinoP1, getRumblePin(listInputs.get(i)), stateBlink);
-        }
-        else
-        {
-          setPinState(arduinoP2, getLedPin(listInputs.get(i) - numberInputs, !firstArduino), stateBlink);
-          setPinState(arduinoP2, getRumblePin(listInputs.get(i) - numberInputs), stateBlink);
-        }
+        audioNextRound.rewind();
+        audioNextRound.play();
+        delay(timerNextRoundSound);
       }
+      endGame();
     }
-  }
-  else
-  {
-    if (millis() - previousTimerBip > timerPlayBip)
-    {
-      audioBip.rewind();
-      audioBip.play();
-      previousTimerBip = millis();
-    }
-  }
-  
-  // End round
-  if (millis() > prevTime + endTimerInput)
-  {
-    println("End round! Too slow!");
-    currentIndexStepTwister = -1;
-    
-    audioEnd.rewind();
-    audioEnd.play();
-    delay(timerEndSound);
-    
-    // Warn players that the game will start
-    audioAreYouReady.rewind();
-    audioAreYouReady.play();
-    delay(timerAreYouReadySound);
-    audioStart.rewind();
-    audioStart.play();
-    delay(timerStartSound);
-    
-    endGame();
-  }
-  else if (nbFind == listInputs.size())
-  {
-    println("End!");
-    if (currentIndexStepTwister < stepTwister.length - 1)
-    {
-      audioNextRound.rewind();
-      audioNextRound.play();
-      delay(timerNextRoundSound);
-    }
-    endGame();
   }
 }
 
