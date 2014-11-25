@@ -82,7 +82,7 @@ int currentIndexStepTwister;
 int previousTimerBip;
 boolean levelDifficultyNormal = true;
 int stepTwister[];
-boolean gameIsFinish = false;
+boolean gameIsFinish;
 int timeStartGame;
 
 // Music
@@ -224,6 +224,7 @@ void endGame()
   if (currentIndexStepTwister >= stepTwister.length)
   {
     currentIndexStepTwister = 0;
+    gameIsFinish = true;
     audioWinTwister.rewind();
     audioWinTwister.play();
     
@@ -247,8 +248,6 @@ void endGame()
   stopAllRumble(arduinoP2);
   stopAllLED(arduinoP1, firstArduino);
   stopAllLED(arduinoP2, !firstArduino);
-  
-  gameIsFinish = true;
 }
 
 void mousePressed()
@@ -397,7 +396,7 @@ void draw()
     }
     else if (nbFind == listInputs.size())
     {
-      println("End!");
+      println("End round! Next!");
       if (currentIndexStepTwister < stepTwister.length - 1)
       {
         audioNextRound.rewind();
