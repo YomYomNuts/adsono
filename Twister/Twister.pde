@@ -305,17 +305,10 @@ boolean drawButton(String textToDisplay, int x, int y, int width, int height)
 
 void draw()
 {
-  int currentMillis = millis();
-  
-  // Button
-  background(backgroundColor);
-  textAlign(CENTER);
-  buttonReset = drawButton("Reset Game", buttonX, buttonY, buttonSize, buttonSize);
-  buttonNormal = drawButton("Normal Game", buttonX + (buttonSize + offsetBetweenButton), buttonY, buttonSize, buttonSize);
-  buttonHard = drawButton("Hard Game", buttonX + (buttonSize + offsetBetweenButton) * 2, buttonY, buttonSize, buttonSize);
-
   if (!gameIsFinish)
   {
+    int currentMillis = millis();
+    
     // Get inputs
     GetInputs(valueInputP1, arduinoP1, firstArduino);
     GetInputs(valueInputP2, arduinoP2, !firstArduino);
@@ -382,6 +375,7 @@ void draw()
     {
       println("End round! Too slow!");
       currentIndexStepTwister = -1;
+      gameIsFinish = true;
       
       stopAllRumble(arduinoP1);
       stopAllRumble(arduinoP2);
@@ -397,15 +391,36 @@ void draw()
     else if (nbFind == listInputs.size())
     {
       println("End round! Next!");
+      
+      stopAllRumble(arduinoP1);
+      stopAllRumble(arduinoP2);
+      stopAllLED(arduinoP1, firstArduino);
+      stopAllLED(arduinoP2, !firstArduino);
+      
       if (currentIndexStepTwister < stepTwister.length - 1)
       {
         audioNextRound.rewind();
         audioNextRound.play();
         delay(timerNextRoundSound);
+        endGame();
+        
+        // Launch the next round
+        initGame();
       }
-      endGame();
+      else
+      {
+        endGame();
+      }
     }
   }
+  
+  // Button
+  background(backgroundColor);
+  textAlign(CENTER);
+  buttonReset = drawButton("Reset Game", buttonX, buttonY, buttonSize, buttonSize);
+  buttonNormal = drawButton("Normal Game", buttonX + (buttonSize + offsetBetweenButton), buttonY, buttonSize, buttonSize);
+  buttonHard = drawButton("Hard Game", buttonX + (buttonSize + offsetBetweenButton) * 2, buttonY, buttonSize, buttonSize);
+
 }
 
 void buttonState()
